@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{ r.name }} — Contact{% endblock %}
+
+{% block content %}
+
+<section class="page-hero" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
+    <div class="container">
+        <p class="page-eyebrow">{{ r.short_name }}</p>
+        <h1>Contact & Location</h1>
+        <p class="page-sub">We'd love to hear from you</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="contact-grid">
+            <div class="contact-info">
+                <h2>Get in Touch</h2>
+
+                <div class="contact-block">
+                    <h3>📍 Address</h3>
+                    <p>{{ r.address_line_1 }}<br>{{ r.address_line_2 }}</p>
+                </div>
+
+                <div class="contact-block">
+                    <h3>📞 Phone</h3>
+                    <p><a href="tel:{{ r.phone }}">{{ r.phone }}</a></p>
+                </div>
+
+                {% if r.whatsapp %}
+                <div class="contact-block">
+                    <h3>💬 WhatsApp</h3>
+                    <p><a href="https://wa.me/{{ r.whatsapp|replace('+','')|replace(' ','') }}" target="_blank" rel="noopener">{{ r.whatsapp }}</a></p>
+                </div>
+                {% endif %}
+
+                <div class="contact-block">
+                    <h3>✉️ Email</h3>
+                    <p><a href="mailto:{{ r.email }}">{{ r.email }}</a></p>
+                </div>
+
+                {% if r.instagram_url %}
+                <div class="contact-block">
+                    <h3>📸 Instagram</h3>
+                    <p><a href="{{ r.instagram_url }}" target="_blank" rel="noopener">{{ r.instagram }}</a></p>
+                </div>
+                {% endif %}
+
+                <div class="contact-block">
+                    <h3>🕒 Hours</h3>
+                    <ul class="hours-inline">
+                        {% for day, time in r.hours %}
+                            <li><span>{{ day }}</span><span>{{ time }}</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="contact-map">
+                <div class="map-wrap">
+                    <iframe
+                        src="https://www.google.com/maps?q={{ r.map_query }}&output=embed"
+                        width="100%"
+                        height="450"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+                <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-primary btn-block">Reserve a Table</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}{{ r.name }} — Menu{% endblock %}
+
+{% block content %}
+
+<section class="page-hero" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
+    <div class="container">
+        <p class="page-eyebrow">{{ r.short_name }}</p>
+        <h1>Our Menu</h1>
+        <p class="page-sub">{{ r.tagline }}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <nav class="menu-nav">
+            {% for category in r.menu.keys() %}
+                <a href="#{{ category|replace(' ', '-')|replace('(','')|replace(')','')|replace('/','-')|lower }}">{{ category }}</a>
+            {% endfor %}
+        </nav>
+
+        {% for category, items in r.menu.items() %}
+            <div class="menu-category" id="{{ category|replace(' ', '-')|replace('(','')|replace(')','')|replace('/','-')|lower }}" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
+                <h2 class="menu-category-title">{{ category }}</h2>
+                <div class="menu-items">
+                    {% for name, price, desc in items %}
+                        <div class="menu-item">
+                            <div class="menu-item-header">
+                                <span class="menu-item-name">{{ name }}</span>
+                                <span class="menu-item-dots"></span>
+                                <span class="menu-item-price">{{ price }}</span>
+                            </div>
+                            {% if desc %}
+                                <p class="menu-item-desc">{{ desc }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="menu-footer">
+            <p><em>All prices include VAT. Menu and prices subject to change without notice.</em></p>
+            <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-primary">Reserve a Table</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

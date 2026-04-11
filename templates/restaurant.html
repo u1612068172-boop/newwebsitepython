@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}{{ r.name }} — Setúbal, Portugal{% endblock %}
+
+{% block content %}
+
+<section class="restaurant-hero" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }}; background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)), url('{{ url_for('static', filename=r.hero_image) }}');">
+    <div class="container">
+        <span class="restaurant-hero-emoji">{{ r.hero_emoji }}</span>
+        <h1 class="restaurant-hero-title">{{ r.name }}</h1>
+        <p class="restaurant-hero-tagline">{{ r.tagline }}</p>
+        {% if r.sub_tagline %}
+            <p class="restaurant-hero-sub">— {{ r.sub_tagline }} —</p>
+        {% endif %}
+        <div class="restaurant-hero-actions">
+            <a href="#menu" class="btn btn-gold">View Menu</a>
+            <a href="#gallery" class="btn btn-outline-light">Gallery</a>
+            <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-outline-light">Reserve</a>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="restaurant-intro">
+            <div>
+                <h2 class="section-title text-left">Welcome</h2>
+                <p class="lead">{{ r.description }}</p>
+                <p><strong>Cuisine:</strong> {{ r.type }}</p>
+                <div class="btn-row">
+                    <a href="#menu" class="btn btn-primary">Explore Menu</a>
+                    <a href="#gallery" class="btn btn-outline-dark">Gallery</a>
+                    <a href="{{ url_for('contact', slug=r.id) }}" class="btn btn-outline-dark">Contact</a>
+                </div>
+            </div>
+            <aside class="info-card" style="--r-primary: {{ r.theme.primary }};">
+                <h3>Visit Us</h3>
+                <div class="info-block">
+                    <strong>📍 Address</strong>
+                    <p>{{ r.address_line_1 }}<br>{{ r.address_line_2 }}</p>
+                </div>
+                <div class="info-block">
+                    <strong>📞 Phone</strong>
+                    <p><a href="tel:{{ r.phone }}">{{ r.phone }}</a></p>
+                </div>
+                <div class="info-block">
+                    <strong>✉️ Email</strong>
+                    <p><a href="mailto:{{ r.email }}">{{ r.email }}</a></p>
+                </div>
+                {% if r.instagram_url %}
+                <div class="info-block">
+                    <strong>📸 Instagram</strong>
+                    <p><a href="{{ r.instagram_url }}" target="_blank" rel="noopener">{{ r.instagram }}</a></p>
+                </div>
+                {% endif %}
+            </aside>
+        </div>
+    </div>
+</section>
+
+<section class="section section-beige">
+    <div class="container">
+        <h2 class="section-title">Opening Hours</h2>
+        <div class="hours-grid">
+            {% for day, time in r.hours %}
+                <div class="hours-row {% if time == 'CLOSED' %}closed{% endif %}">
+                    <span class="day">{{ day }}</span>
+                    <span class="time">{{ time }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section id="menu" class="section section-beige">
+    <div class="container">
+        <h2 class="section-title">Our Menu</h2>
+        <p class="section-sub text-center">Explore the full selection at {{ r.short_name }}</p>
+
+        <nav class="menu-nav">
+            {% for category in r.menu.keys() %}
+                <a href="#{{ category|replace(' ', '-')|replace('(','')|replace(')','')|replace('/','-')|replace(',','')|lower }}">{{ category }}</a>
+            {% endfor %}
+        </nav>
+
+        {% for category, items in r.menu.items() %}
+            <div class="menu-category" id="{{ category|replace(' ', '-')|replace('(','')|replace(')','')|replace('/','-')|replace(',','')|lower }}" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
+                <h3 class="menu-category-title">{{ category }}</h3>
+                <div class="menu-items">
+                    {% for name, price, desc in items %}
+                        <div class="menu-item">
+                            <div class="menu-item-header">
+                                <span class="menu-item-name">{{ name }}</span>
+                                <span class="menu-item-dots"></span>
+                                <span class="menu-item-price">{{ price }}</span>
+                            </div>
+                            {% if desc %}
+                                <p class="menu-item-desc">{{ desc }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% if r.policies %}
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Good to Know</h2>
+        <ul class="policy-list">
+            {% for p in r.policies %}
+                <li>{{ p }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+{% endif %}
+
+{% if r.gallery %}
+<section id="gallery" class="section">
+    <div class="container">
+        <h2 class="section-title">Gallery</h2>
+        <p class="section-sub text-center">A glimpse of what awaits you at {{ r.short_name }}</p>
+        <div class="gallery-grid">
+            {% for img, caption in r.gallery %}
+                <figure class="gallery-item">
+                    <img src="{{ url_for('static', filename=img) }}" alt="{{ caption }}" loading="lazy">
+                    <figcaption>{{ caption }}</figcaption>
+                </figure>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="section section-dark">
+    <div class="container text-center">
+        <h2 class="section-title light">Ready to Experience {{ r.short_name }}?</h2>
+        <p class="section-sub light">Book your table today — we look forward to welcoming you.</p>
+        <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-gold btn-lg">Reserve Now</a>
+    </div>
+</section>
+
+{% endblock %}

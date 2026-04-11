@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}About — Original's Casa de Peixe &amp; Lapicanha{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+    <div class="container">
+        <p class="page-eyebrow">Our Story</p>
+        <h1>About Our Restaurants</h1>
+        <p class="page-sub">Two authentic Portuguese dining experiences in Setúbal</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container about-content">
+        <p class="lead">Welcome — home to two beloved Portuguese establishments in the heart of Setúbal.</p>
+        <p>Located neighbours on the historic Rua & Largo José Afonso, our restaurants offer visitors the chance to experience two distinct facets of Portuguese cuisine: the bounty of the Atlantic coast and the tradition of the rustic grill.</p>
+
+        {% for r in restaurants %}
+        <div class="about-restaurant">
+            <h2>{{ r.hero_emoji }} {{ r.name }}</h2>
+            <p class="tagline">{{ r.tagline }}</p>
+            <p>{{ r.description }}</p>
+            <a href="{{ url_for('restaurant', slug=r.id) }}" class="btn btn-primary">Visit {{ r.short_name }}</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

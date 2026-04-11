@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Original's Casa de Peixe &amp; Lapicanha — Two Portuguese Gems in Setúbal{% endblock %}
+
+{% block content %}
+
+<section class="hero-home" style="background-image: linear-gradient(rgba(20,10,5,0.72), rgba(20,10,5,0.78)), url('{{ url_for('static', filename='images/lapicanha-hero.png') }}');">
+    <div class="hero-home-bg"></div>
+    <div class="container hero-home-content">
+        <p class="hero-eyebrow">★ Two Authentic Portuguese Restaurants ★</p>
+        <h1 class="hero-title">Casa de Peixe <span class="hero-amp">&amp;</span> Lapicanha</h1>
+        <p class="hero-sub">A Taste of Portugal in the Heart of Setúbal</p>
+        <p class="hero-desc">From the freshest seafood of the Atlantic coast to premium grilled picanha — experience two distinct dining traditions, each with its own authentic Portuguese soul.</p>
+        <div class="hero-ctas">
+            <a href="#restaurants" class="btn btn-gold">Explore Restaurants</a>
+            <a href="{{ url_for('reservations') }}" class="btn btn-outline">Reserve a Table</a>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="restaurants">
+    <div class="container">
+        <h2 class="section-title">Our Restaurants</h2>
+        <p class="section-sub">Choose your Portuguese adventure</p>
+
+        <div class="restaurant-grid">
+            {% for r in restaurants %}
+            <article class="restaurant-card" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
+                {% if r.hero_image %}
+                    <div class="card-image">
+                        <img src="{{ url_for('static', filename=r.hero_image) }}" alt="{{ r.name }}" loading="lazy">
+                    </div>
+                {% endif %}
+                <div class="card-header">
+                    <span class="card-emoji">{{ r.hero_emoji }}</span>
+                    <h3 class="card-name">{{ r.name }}</h3>
+                    <p class="card-tagline">{{ r.tagline }}</p>
+                    {% if r.sub_tagline %}
+                        <p class="card-subtagline">{{ r.sub_tagline }}</p>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <p class="card-desc">{{ r.description }}</p>
+                    <div class="card-meta">
+                        <div class="meta-item">
+                            <strong>📍 Address</strong>
+                            <span>{{ r.address_line_1 }}<br>{{ r.address_line_2 }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <strong>📞 Phone</strong>
+                            <span>{{ r.phone }}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="{{ url_for('restaurant', slug=r.id) }}" class="btn btn-primary">Visit Restaurant</a>
+                        <a href="{{ url_for('menu', slug=r.id) }}" class="btn btn-outline-dark">See Menu</a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section section-beige">
+    <div class="container">
+        <div class="about-split">
+            <div>
+                <h2 class="section-title text-left">About Us</h2>
+                <p class="lead">Two restaurants. One passion. Authentic Portugal.</p>
+                <p>Located on the historic Rua & Largo José Afonso in Setúbal, our two restaurants sit as neighbours — each a celebration of a different facet of Portuguese cuisine.</p>
+                <p><strong>Original's Casa de Peixe</strong> brings you the freshest catch from the Atlantic — sea bream, cod, octopus, prawns — cooked with recipes passed down through generations of coastal cooks.</p>
+                <p><strong>Lapicanha</strong> is our premium grill house. We specialize in perfectly prepared picanha and other prime cuts, paired with authentic Portuguese sides, wines, and a warm, rustic atmosphere.</p>
+                <a href="{{ url_for('reservations') }}" class="btn btn-primary">Book Your Table</a>
+            </div>
+            <div class="about-stats">
+                <div class="stat"><span class="stat-num">2</span><span class="stat-label">Restaurants</span></div>
+                <div class="stat"><span class="stat-num">200+</span><span class="stat-label">Menu Items</span></div>
+                <div class="stat"><span class="stat-num">60+</span><span class="stat-label">Wines</span></div>
+                <div class="stat"><span class="stat-num">1</span><span class="stat-label">Passion</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-dark">
+    <div class="container text-center">
+        <h2 class="section-title light">Visit Us in Setúbal</h2>
+        <p class="section-sub light">Both restaurants are located on Rua/Largo José Afonso — come for lunch at Casa de Peixe, return for dinner at Lapicanha.</p>
+        <a href="{{ url_for('reservations') }}" class="btn btn-gold btn-lg">Make a Reservation</a>
+    </div>
+</section>
+
+{% endblock %}

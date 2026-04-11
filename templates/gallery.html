@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ r.name }} — Gallery{% endblock %}
+
+{% block content %}
+
+<section class="page-hero" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
+    <div class="container">
+        <p class="page-eyebrow">{{ r.short_name }}</p>
+        <h1>Gallery</h1>
+        <p class="page-sub">A glimpse of our dining experience</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="gallery-grid">
+            {% for i in range(1, 13) %}
+                <div class="gallery-item" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
+                    <div class="gallery-placeholder">
+                        <span class="gallery-emoji">{{ r.hero_emoji }}</span>
+                        <span class="gallery-label">{{ r.short_name }} · Photo {{ i }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="gallery-note">
+            <p><em>Photo gallery coming soon. Follow us on social media for the latest pictures of our dishes and atmosphere.</em></p>
+            {% if r.instagram_url %}
+                <a href="{{ r.instagram_url }}" target="_blank" rel="noopener" class="btn btn-outline-dark">Follow on Instagram</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

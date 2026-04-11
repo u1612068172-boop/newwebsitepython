@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Original's Casa de Peixe & Lapicanha — Setúbal, Portugal{% endblock %}</title>
+    <meta name="description" content="Two authentic Portuguese restaurants in Setúbal: Original's Casa de Peixe (seafood) and Lapicanha (premium grill).">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="container header-inner">
+        <a href="{{ url_for('home') }}" class="brand">
+            <span class="brand-mark">O</span>
+            <span class="brand-text">
+                <span class="brand-name">Casa de Peixe &amp; Lapicanha</span>
+                <span class="brand-sub">Original's · Setúbal</span>
+            </span>
+        </a>
+
+        <nav class="main-nav">
+            <a href="{{ url_for('home') }}">Home</a>
+            <div class="nav-dropdown">
+                <button class="nav-btn">Restaurants ▾</button>
+                <div class="dropdown-menu">
+                    {% for r in all_restaurants %}
+                        <a href="{{ url_for('restaurant', slug=r.id) }}">{{ r.short_name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="nav-dropdown">
+                <button class="nav-btn">Menus ▾</button>
+                <div class="dropdown-menu">
+                    {% for r in all_restaurants %}
+                        <a href="{{ url_for('menu', slug=r.id) }}">{{ r.short_name }} Menu</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <a href="{{ url_for('reservations') }}" class="btn-reserve">Reserve a Table</a>
+        </nav>
+
+        <button class="mobile-toggle" aria-label="Toggle menu">☰</button>
+    </div>
+</header>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-container container">
+            {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <div class="footer-col">
+            <h4>Original's Casa de Peixe &amp; Lapicanha</h4>
+            <p>Two authentic Portuguese dining experiences in Setúbal. From fresh coastal seafood to premium grilled picanha.</p>
+        </div>
+        {% for r in all_restaurants %}
+        <div class="footer-col">
+            <h4>{{ r.short_name }}</h4>
+            <p>{{ r.address_line_1 }}<br>{{ r.address_line_2 }}</p>
+            <p><a href="tel:{{ r.phone }}">{{ r.phone }}</a></p>
+            <p><a href="mailto:{{ r.email }}">{{ r.email }}</a></p>
+            {% if r.instagram_url %}
+                <p><a href="{{ r.instagram_url }}" target="_blank" rel="noopener">Instagram: {{ r.instagram }}</a></p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul class="footer-links">
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                {% for r in all_restaurants %}
+                    <li><a href="{{ url_for('restaurant', slug=r.id) }}">{{ r.short_name }}</a></li>
+                {% endfor %}
+                <li><a href="{{ url_for('reservations') }}">Reservations</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="container">
+            <p>&copy; {{ current_year }} Original's Casa de Peixe &amp; Lapicanha · Setúbal, Portugal. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

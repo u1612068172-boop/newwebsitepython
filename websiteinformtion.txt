@@ -1,0 +1,1136 @@
+================================================================================
+                   AMAN BHAIYA RESTAURANT - COMPLETE WEBSITE INFORMATION
+                   Portuguese Restaurant Management System
+================================================================================
+
+PROJECT NAME : Aman-Bhaiya-Restaurent (Portuguese Restaurant Management System)
+PROJECT TYPE : Full-stack Web Application
+RESTAURANTS  : 2 (Original's Casa de Peixe + Lapicanha)
+LOCATION     : Setúbal, Portugal
+
+
+================================================================================
+                              PROJECT OVERVIEW
+================================================================================
+
+This is a full-stack web application for managing two Portuguese restaurants -
+"Original's Casa de Peixe" (seafood) and "Lapicanha" (grilled meats). The system
+provides a public-facing website with restaurant information, menus, photo
+galleries, and reservation capabilities, along with administrative features for
+content management.
+
+The application showcases authentic Portuguese cuisine with a focus on:
+- Casa de Peixe: Traditional Portuguese coastal/seafood cuisine
+- Lapicanha: Premium grilled meats (specializing in picanha)
+
+
+================================================================================
+                              TECH STACK
+================================================================================
+
+FRONTEND:
+- Framework      : React 18 with TypeScript
+- Routing        : Wouter (client-side routing)
+- State Mgmt     : TanStack Query (React Query) for server state
+- UI Components  : Shadcn/ui component library with Radix UI primitives
+- Styling        : Tailwind CSS (custom Portuguese theme: wine, beige, olive)
+- Typography     : Playfair Display (serif), Inter (sans-serif), Geist Mono
+- Forms          : React Hook Form with Zod validation
+- Build Tool     : Vite
+- i18n           : Language Context with translations.ts
+
+BACKEND:
+- Framework      : Express.js with TypeScript
+- API Design     : RESTful API
+- File Uploads   : Multer middleware (image uploads)
+- Storage        : Interface-based storage system (MemStorage for dev)
+- Logging        : Custom middleware for API request logging
+- Error Handling : Centralized error handling middleware
+
+DATABASE:
+- ORM            : Drizzle ORM
+- Dialect        : PostgreSQL
+- Provider       : Neon Database (serverless PostgreSQL)
+- Migrations     : Drizzle Kit
+- Tables         : restaurants, menu_items, reservations, gallery_photos
+
+DEPLOYMENT:
+- Vercel (serverless via api/index.ts)
+- vercel.json configuration
+- Environment var: DATABASE_URL (PostgreSQL connection)
+
+INTEGRATIONS:
+- Google Maps (requires VITE_GOOGLE_MAPS_API_KEY)
+
+
+================================================================================
+                           PROJECT STRUCTURE
+================================================================================
+
+Aman-Bhaiya-Restaurent/
+├── api/
+│   └── index.ts              # Vercel serverless entry point
+├── client/                   # React frontend
+│   ├── index.html
+│   └── src/
+│       ├── App.tsx
+│       ├── main.tsx
+│       ├── index.css
+│       ├── assets/           # Local bundled images
+│       ├── components/       # Page sections
+│       │   ├── navigation.tsx
+│       │   ├── hero-section.tsx
+│       │   ├── about-section.tsx
+│       │   ├── menu-section.tsx
+│       │   ├── gallery-section.tsx
+│       │   ├── reservations-section.tsx
+│       │   ├── contact-section.tsx
+│       │   ├── google-maps.tsx
+│       │   └── ui/           # Shadcn/ui components
+│       ├── pages/
+│       │   ├── home.tsx
+│       │   ├── restaurant.tsx
+│       │   ├── admin.tsx
+│       │   └── not-found.tsx
+│       ├── contexts/
+│       │   └── LanguageContext.tsx  # i18n support
+│       ├── hooks/            # useDocumentTitle, use-mobile, use-toast
+│       └── lib/              # constants, queryClient, translations, utils
+├── server/                   # Express backend
+│   ├── index.ts              # Server entry
+│   ├── routes.ts             # API route handlers
+│   ├── storage.ts            # Storage abstraction (MemStorage)
+│   ├── db.ts                 # Drizzle DB connection
+│   ├── seed.ts               # Seed data
+│   └── vite.ts               # Vite dev middleware
+├── shared/
+│   └── schema.ts             # Drizzle schema + Zod types (shared FE/BE)
+├── uploads/                  # Multer image uploads (empty at runtime)
+├── attached_assets/          # Raw source assets + original PDFs
+├── wordpress-export/         # Legacy WordPress conversion data
+├── drizzle.config.ts         # Drizzle Kit config
+├── vite.config.ts
+├── tailwind.config.ts
+├── postcss.config.js
+├── components.json           # Shadcn config
+├── tsconfig.json
+├── vercel.json               # Vercel deployment config
+├── package.json
+└── replit.md                 # Project documentation
+
+
+================================================================================
+                           DATABASE SCHEMA
+================================================================================
+
+TABLE: restaurants
+------------------
+- id           : varchar (UUID, PK)
+- name         : text (required)
+- slug         : text (required, unique)
+- description  : text (required)
+- address      : text (required)
+- phone        : text (required)
+- email        : text (required)
+- hours        : text (required)
+- createdAt    : timestamp
+
+TABLE: menu_items
+-----------------
+- id           : varchar (UUID, PK)
+- restaurantId : text (FK)
+- name         : text (required)
+- description  : text (optional)
+- price        : text (required)
+- category     : text (starters | mains | desserts | drinks)
+- imageUrl     : text (optional)
+- createdAt    : timestamp
+
+TABLE: reservations
+-------------------
+- id              : varchar (UUID, PK)
+- restaurantId    : text (FK)
+- name            : text (required)
+- email           : text (required)
+- date            : text (required)
+- time            : text (required)
+- guests          : integer (required)
+- specialRequests : text (optional)
+- status          : text (default: "pending")
+- createdAt       : timestamp
+
+TABLE: gallery_photos
+---------------------
+- id           : varchar (UUID, PK)
+- restaurantId : text (FK)
+- imageUrl     : text (required)
+- title        : text (optional)
+- description  : text (optional)
+- createdAt    : timestamp
+
+
+================================================================================
+================================================================================
+                   RESTAURANT 1 - ORIGINAL'S CASA DE PEIXE
+================================================================================
+================================================================================
+
+BASIC INFO
+----------
+Name         : Original's Casa de Peixe
+Slug         : casa-da-peixe
+Internal ID  : casa-da-peixe-id
+Tagline      : "Fresh seafood and Portuguese coastal flavors"
+Type         : Seafood / Portuguese Coastal Cuisine
+
+DESCRIPTION
+-----------
+Specializing in the freshest seafood and traditional Portuguese coastal cuisine.
+Our dishes celebrate the bounty of the sea with authentic recipes passed down
+through generations of fishermen and coastal cooks.
+
+CONTACT
+-------
+Address      : Largo José Afonso 64, 2900-633
+               Setúbal, Portugal
+Phone        : +351 926 091 468
+WhatsApp     : +351 926 091 468
+Email        : info@casadapeixe.pt
+Instagram    : @casadepeixe3
+Instagram URL: https://www.instagram.com/casadepeixe3/
+
+OPENING HOURS
+-------------
+Monday       : CLOSED
+Tuesday      : 12:00 PM - 10:00 PM
+Wednesday    : 12:00 PM - 10:00 PM
+Thursday     : 12:00 PM - 10:00 PM
+Friday       : 12:00 PM - 11:00 PM
+Saturday     : 12:00 PM - 11:00 PM
+Sunday       : 12:00 PM - 9:00 PM
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - IMPORTANT POLICIES (from PDF menu page 1)
+--------------------------------------------------------------------------------
+
+* Os preços incluem a taxa de IVA em vigor.
+  (Prices include current VAT rate.)
+
+* Nenhum prato, produto alimentar ou bebida, incluindo o couvert, pode ser
+  cobrado se não for solicitado pelo cliente ou por este for inutilizado.
+  (No dish, food or drink, including couvert, may be charged if not requested
+  by the customer or if unused by them.)
+
+* O estabelecimento tem livro de reclamações.
+  (The establishment has a complaints book.)
+
+* Os produtos alimentares não embalados, uma vez escolhidos e entregue,
+  consideram-se comprados, não sendo permitido trocas ou devoluções.
+  (Unpackaged food items, once chosen and delivered, are considered purchased;
+  no exchanges or returns allowed.)
+
+* Informações sobre os alergénios: se é alérgico ou intolerante a algum alimento
+  ou substância alimentar e tem duvidas se este foi utilizado na preparação
+  /confeção do que pretende consumir, pode solicitar informação a um dos nossos
+  colaboradores.
+  (Allergen information: if you are allergic or intolerant to any food or food
+  substance and have doubts about whether it was used in preparation, you may
+  request information from one of our staff.)
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: COUVERT / STARTERS
+--------------------------------------------------------------------------------
+
+COUVERT:
+- Cesto de Pão                 1.50€    (Fresh bread basket)
+- Queijo Seco                  4.50€    (Portuguese dried cheese)
+- Queijo Fresco                6.50€    (Fresh Portuguese cheese)
+- Azeitonas                    2.50€    (Portuguese olives)
+- Patês                        1.50€    (Pâtés) [PDF only]
+- Manteiga                     1.50€    (Butter) [PDF only]
+- Presunto                    11.00€    (Portuguese cured ham)
+
+SOUPS:
+- Sopa do Dia                  3.00€    (Daily soup)
+- Sopa de Peixe                4.50€    (Traditional Portuguese fish soup)
+
+ENTRADAS (STARTERS):
+- Camarão ao Alhinho          17.00€    (Garlic prawns)
+- Ameijoas ao Natural         19.00€    (Natural clams)
+- Mexilhão à Original         19.90€    (Original style mussels)
+- Taquitos de Choco           12.00€    (Cuttlefish strips)
+- Lingueirão à Bolhão Pato    20.00€    (Razor clams Bolhão Pato style)
+- Salada de Polvo              7.00€    (Octopus salad)
+- Choco Frito                 10.00€    (Fried cuttlefish)
+- Croquetes de Carne           8.00€    (Meat croquettes) [PDF only]
+- Camembert Breaded            7.50€    (Breaded Camembert) [PDF only]
+- Spring Roll de Carne        (price n/a)  [PDF only]
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: PEIXE GRELHADO À DOSE (GRILLED FISH - PORTIONS)
+--------------------------------------------------------------------------------
+
+- Garoupa                     21.00€    (Grilled grouper portion)
+- Dourada                     17.00€    (Grilled sea bream portion)
+- Robalo                      17.00€    (Grilled sea bass portion)
+- Salmão                      18.00€    (Grilled salmon portion)
+- Peixe Espada                18.00€    (Grilled scabbard fish)
+- Sardinhas                   15.00€    (Grilled sardines)
+- Choco Assado                16.00€    (Roasted cuttlefish)
+- Lulas                       16.00€    (Grilled squid)
+- Atum                        21.00€    (Grilled tuna portion)
+- Bacalhau                    21.00€    (Grilled cod portion)
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: PEIXE GRELHADO AO PESO (GRILLED FISH BY WEIGHT)
+--------------------------------------------------------------------------------
+
+- Cantaril                    40.00€/KG   (Fresh cantaril by weight)
+- Linguado                    60.00€/KG   (Fresh sole by weight)
+- Pregado                     40.00€/KG   (Fresh turbot by weight)
+- Dourada do Mar              50.00€/KG   (Wild sea bream by weight)
+- Robalo do Mar               50.00€/KG   (Wild sea bass by weight)
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: ACOMPANHAMENTOS (SIDES) [PDF only]
+--------------------------------------------------------------------------------
+
+- Salada de Pimentos           5.50€    (Pepper salad)
+- Salada                       4.50€    (Salad)
+- Arroz de Tomate              9.00€    (Tomato rice)
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: CARNE (MEAT)
+--------------------------------------------------------------------------------
+
+- Bitoque                     12.50€    (Portuguese steak with fried egg)
+- Bife à Original             17.90€    (Original style steak)
+- Bife à Portuguesa           18.00€    (Portuguese style steak)
+- Entrecote                   29.90€    (Grilled ribeye steak)
+- Piano                       19.50€    (Piano cut steak)
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: MENU PRATO DO DIA (DAILY SPECIAL)
+--------------------------------------------------------------------------------
+
+- Prato do Dia                24.99€
+  (Daily special: Main dish + drink + dessert + coffee)
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: TACHOS & PRATOS (POTS & DISHES)
+--------------------------------------------------------------------------------
+
+- Massa de Peixe              35.00€    (Fish pasta)
+- Arroz de Marisco            37.00€    (Seafood rice)
+- Cataplana                   50.00€    (Traditional seafood cataplana)
+- Atum de Cebolada            24.00€    (Tuna with onions)
+- Choco à Algarvia            16.00€    (Cuttlefish Algarve style)
+- Polvo à Lagareiro           19.00€    (Octopus with olive oil and garlic)
+- Choco Frito (prato)         16.50€    (Fried cuttlefish main) [PDF only]
+- Bacalhau à Brás             17.00€    (Shredded cod with eggs)
+- Arroz de Gambas             22.50€    (Prawn rice)
+- Caril de Gambas             24.50€    (Prawn curry)
+- Bacalhau com Manjericão     19.50€    (Cod with basil)
+- Risotto de Camarão          26.50€    (Prawn risotto)
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: SOBREMESAS (DESSERTS)
+--------------------------------------------------------------------------------
+
+- Cheesecake Baba de Camelo    4.50€    (Camel drool cheesecake)
+- Cheesecake Frutos Vermelhos  4.50€    (Red berries cheesecake)
+- Cheesecake Manga             4.50€    (Mango cheesecake)
+- Bolo Brigadeiro              4.50€    (Brazilian brigadeiro cake)
+- Bolo de Bolacha              4.50€    (Cookie cake)
+- Pudim                        4.50€    (Portuguese pudding)
+- Mousse de Chocolate          4.50€    (Chocolate mousse)
+- Mousse de Manga              4.50€    (Mango mousse)
+- Doce da Casa                 4.50€    (House special dessert)
+- Fruta                        3.50€    (Fresh fruit)
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: CAFETÁRIA (COFFEE BAR)
+--------------------------------------------------------------------------------
+
+- Café                         1.20€    (Portuguese espresso)
+- Descafeinado                 1.20€    (Decaffeinated)
+- Chá                          1.50€    (Tea)
+- Abatanado                    1.50€    (Abatanado coffee) [PDF only]
+- Meia de Leite                2.00€    (Coffee with milk)
+- Irish Coffee                 5.00€    (Irish coffee)
+- Café Bombom                  6.50€    (Café bombom) [PDF only]
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: BEBIDAS (NON-ALCOHOLIC DRINKS)
+--------------------------------------------------------------------------------
+
+- Água 1.5L                    3.00€    (Still water 1.5L)
+- Águas com Gás 1L             2.70€    (Sparkling water 1L)
+- Água com Gás                 2.00€    (Sparkling water) [PDF only]
+- Água Garrafa 0.50cl          1.50€    (Bottled water) [PDF only]
+- Ice Tea                      2.50€    (Iced tea)
+- Coca-Cola                    2.50€    (Coca-Cola)
+- Guaraná                      2.50€    (Guaraná) [PDF only]
+- Sumol                        2.50€    (Sumol) [PDF only]
+- Sumos Naturais               3.00€    (Natural juices) [PDF only]
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: CERVEJAS (BEERS)
+--------------------------------------------------------------------------------
+
+- Sagres                       2.50€    (Portuguese beer)
+- Sagres Preta                 2.50€    (Dark Sagres) [PDF only]
+- Bandida do Pomar             4.00€    (Craft beer) [PDF only]
+- Caneca Imperial              2.50€    (Imperial mug) [PDF only]
+- Imperial                     2.50€    (Draft beer)
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: SANGRIAS (PDF has 2L sizes)
+--------------------------------------------------------------------------------
+
+                           1L         2L
+- Sangria Branca          14.90€   21.90€    (White sangria)
+- Sangria Tinta           14.90€   21.90€    (Red sangria)
+- Sangria Espumante       17.90€   24.90€    (Sparkling sangria)
+- Sangria Frutos Vermel.  17.90€   24.90€    (Red berries sangria)
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: JARROS DE VINHO (HOUSE WINE PITCHERS)
+--------------------------------------------------------------------------------
+
+                     1/4L     1/2L     1L
+- Vinho Branco      3.00€    5.00€    8.00€
+- Vinho Tinto       3.00€    5.00€    8.00€
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: BEBIDAS ALCOÓLICAS (SPIRITS)
+--------------------------------------------------------------------------------
+
+- Moscatel                     3.50€
+- Licor Beirão                 4.50€
+- Amêndoa Amarga               3.50€
+- CRF                          5.00€
+- Velho Terra                  4.50€
+- Baileys                      5.00€
+- Macieira                     5.00€
+- Logan                       10.00€
+- Bushmills                    5.00€
+- Famous Grouse                5.00€
+- Jameson                      5.00€
+- J&B 15 Anos Reserva         12.00€
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: COCKTAILS
+--------------------------------------------------------------------------------
+
+- Cocktail sem Álcool          6.00€    (Non-alcoholic cocktail)
+- Caipirinha                   6.00€    (Brazilian caipirinha)
+- Caipiblack                   6.00€    (Caipiblack)
+- Marguerita                   8.00€    (Classic margarita)
+- Mojito                       8.00€    (Classic mojito)
+- Apérol Spritz                6.00€    (Italian aperol spritz)
+- Martini                      3.50€
+- Bombay                       8.00€
+- Beefeater Pink               8.00€
+- Beefeater                    8.00€
+- Tanqueray                    8.00€
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: VINHO TINTO (RED WINES)
+--------------------------------------------------------------------------------
+
+- Grainha                     22.00€
+- Costa Boal                  25.00€
+- Casa da Passarella          25.00€
+- Monte dos Perdigões         32.00€
+- Quinta da Vacaria Reserva   92.00€
+- Manoella                    25.00€
+- Mainova                     25.00€
+- Duas Margens Reserva        18.00€
+- Assobio                     16.00€
+- Terras do Grifo             28.00€
+- Cartuxa                     32.00€
+- Plansel                     25.00€
+- Grous                       25.00€
+- Convento da Tomina          25.00€
+- Monte da Peceguinha         21.00€
+- Monte Velho Reserva         18.00€
+- Guarda Rios                 22.00€
+- Reguengos                   16.00€
+- Quinta do Carmo             32.00€
+- Monte das Servas            16.00€
+- Adega Mayor Reserva         21.00€
+- Scala Coeli                 95.00€
+- Sobroso Reserva             25.00€
+- Coelheiros                  25.00€
+- Monte dos Pinheiros         16.00€
+- Humanitas Reserva           24.00€
+- Ermelinda Reserva           16.00€
+- Ermelinda Cabernet          19.00€
+- Ermelinda Syrah             18.00€
+- Ermelinda                   12.00€
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: VINHO BRANCO (WHITE WINES)
+--------------------------------------------------------------------------------
+
+- Catarina                    13.00€
+- Ermelinda                   12.00€
+- Ermelinda Reserva           16.00€
+- Ermelinda Sauvignon Blanc   19.00€
+- Terras do Grifo             16.00€
+- Grainha Reserva             18.00€
+- Passadouro                  16.00€
+- Costa Boal                  25.00€
+- Casa de Santar              22.00€
+- Plansel                     18.00€
+- Herdade do Grous            22.00€
+- Monte das Servas            16.00€
+- Comenda Grande              15.00€
+- Serra do Louro              15.00€
+- Reguengos Seleção           12.00€
+- Adega Mayor Reserva         17.00€
+- Cartuxa                     25.00€
+- Scala Coeli                 65.00€
+- Planalto                    18.00€
+- Duas Margens Reserva        18.00€
+- CARM                        25.00€
+- Quinta da Vacaria Reserva   75.00€
+- Grandes Quintas             25.00€
+- Ermelinda Verdelho          18.00€
+- Ermelinda Terras do Po Res. 19.00€
+- BSE                         24.00€
+- Ervideira                   25.00€
+- Quinta do Carmo             18.00€
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: VINHO ROSÉ (ROSÉ WINES)
+--------------------------------------------------------------------------------
+
+- Mateus                      16.00€
+- Rose Pom Pom                16.00€
+- Ermelinda Rose              16.00€
+- Catarina Rose               16.00€
+
+
+--------------------------------------------------------------------------------
+CASA DE PEIXE - MENU: VINHO VERDE (GREEN WINES)
+--------------------------------------------------------------------------------
+
+- Campo da Vinha              12.00€
+- Casa de Vilacetinho         24.00€
+- Campo da Vinha (alt)        11.00€
+- Soalheiro                   18.00€
+
+
+================================================================================
+================================================================================
+                         RESTAURANT 2 - LAPICANHA
+================================================================================
+================================================================================
+
+BASIC INFO
+----------
+Name         : Lapicanha
+Slug         : lapicanha
+Internal ID  : lapicanha-id
+Tagline      : "Premium grilled meats and traditional flavors"
+Sub-tagline  : "A MEAT RESTAURANT" (from logo)
+Type         : Premium Grill / Steakhouse / Portuguese-Brazilian Fusion
+
+DESCRIPTION
+-----------
+Premium grilled meats and traditional Portuguese flavors in a warm, rustic
+atmosphere. We specialize in perfectly prepared picanha and other prime cuts,
+paired with authentic Portuguese sides and wines.
+
+CONTACT
+-------
+Address      : Rua José Afonso nº 69
+               Setúbal, Portugal
+Phone        : +351 915 214 437
+Email        : reservas@lapicanha.pt
+
+NOTE: WordPress export (stale) listed a different address:
+      "Avenida da República 245, 1050-186 Lisboa" with phone +351 210 654 321
+      The current production data (seed.ts and PDF menu) confirms Setúbal.
+
+OPENING HOURS
+-------------
+Monday       : 6:00 PM - 11:00 PM
+Tuesday      : 6:00 PM - 11:00 PM
+Wednesday    : 6:00 PM - 11:00 PM
+Thursday     : 6:00 PM - 11:00 PM
+Friday       : 6:00 PM - 12:00 AM
+Saturday     : 6:00 PM - 12:00 AM
+Sunday       : 6:00 PM - 10:00 PM
+
+LOGO DESCRIPTION
+----------------
+Red/cream ribbon banner style logo with crossed fork and knife, flame icon
+at top, small flame icon at bottom. Text "LA PICANHA" on the red ribbon.
+Sub-text: "A MEAT RESTAURANT"
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - IMPORTANT POLICIES (from PDF menu)
+--------------------------------------------------------------------------------
+
+* TODOS OS PRATOS SÃO INDIVIDUAIS.
+  (ALL DISHES ARE INDIVIDUAL PORTIONS.)
+
+* MENU INFANTIL:
+  O MENU INFANTIL É APLICADO PARA CRIANÇAS DE 4 A 9 ANOS, A PARTIR É COBRADO O
+  VALOR INTEGRAL.
+  (The children's menu is available for children aged 4 to 9; from age 10 the
+  full price is charged.)
+
+* MENU EXECUTIVO:
+  DE SEGUNDA A SEXTA AOS ALMOÇOS, EXCETO FERIADOS.
+  (Monday to Friday lunches only, except holidays.)
+
+* TAXA DE DESPERDÍCIO (WASTE TAX):
+  A TAXA DE DISPERDÍCIO SERÁ APLICADA PARA CLIENTES QUE PEDEM DEMASIADAS
+  REPETIÇÕES DE PICANHA À DISCRIÇÃO SEM A INTENÇÃO DE CONSUMI-LAS.
+  (The waste tax will be applied to customers who order too many repetitions
+  of Picanha à Discrição without the intent of consumption.)
+
+* SPECIAL PROMOTION - MOTHER'S DAY (MAY):
+  "TEMOS UMA SURPRESA PRA SI EXCLUSIVAMENTE PARA O MÊS DE MAIO, EM COMEMORAÇÃO
+  AO DIA DA MÃE. PICANHA À DISCRIÇÃO COM TODOS OS ACOMPANHAMENTOS INCLUSOS POR
+  APENAS 18.50€"
+  (May-exclusive Mother's Day surprise: Picanha à Discrição with all sides
+  included for just 18.50€)
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: ENTRADAS (STARTERS)
+--------------------------------------------------------------------------------
+
+- Cesto de Pão (2 unidades)    1.50€    (Bread basket 2 units)
+- Queijo Seco                  4.50€    (Dry cheese)
+- Queijo Amanteigado           6.50€    (Buttery cheese)
+- Azeitonas                    3.50€    (Olives)
+- Crepes La Picanha            5.00€    (Spring rolls)
+- Manteiga                     1.00€    (Butter)
+- Presunto                    10.00€    (Ham)
+- Pica Pau                     4.50€    (Woodpecker - cooked picanha with sauce)
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: PRATOS (MAIN DISHES)
+--------------------------------------------------------------------------------
+
+- Hamburger no Prato          14.90€
+  Acompanhamento: ARROZ, BATATA FRITA E FEIJÃO
+  (Rice, fries, and beans)
+
+- Hamburguer Vegano           15.90€
+  Acompanhamento: ARROZ E BATATAS FRITAS
+  (Vegan burger with rice and fries)
+
+- Hamburger La Picanha        15.90€
+  HAMBURGUER NO PÃO, CEBOLA FRITA, BACON, QUEIJO CHEDDAR E TOMATE,
+  ACOMPANHA BATATAS FRITAS
+  (Burger in bun with fried onion, bacon, cheddar cheese, tomato + fries)
+
+- Espetada de Picanha         15.90€
+  NACOS DE PICANHA GRELHADO, COM CHOURIÇO, ACOMPANHA COM ARROZ E BATATA FRITA
+  (Grilled picanha chunks with chorizo, rice, and fries)
+
+- Frango à La Picanha         18.90€
+  PEITO DE FRANGO RECHEADO COM BACON, CHEDDAR, ACOMPANHA COM MOLHO DE ALHO
+  COM ERVAS, ARROZ, SALADA E BATATAS FRITAS
+  (Chicken breast stuffed with bacon and cheddar, served with garlic-herb
+  sauce, rice, salad, and fries)
+
+- Bife de Frango              15.90€
+  BIFE DE FRANGO GRELHADO ACOMPANHA COM ARROZ E BATATA FRITA
+  (Grilled chicken steak with rice and fries)
+
+- Picanha à Discrição         19.50€
+  ARROZ, FEIJÃO, BATATAS FRITAS, SALADA E FAROFA
+  (All-you-can-eat picanha with rice, beans, fries, salad, and farofa)
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: NACOS NA TABUA (PREMIUM CUTS ON A BOARD)
+--------------------------------------------------------------------------------
+
+- Premium Entrecôte (350g)    24.90€
+  Acompanhamento: ARROZ, FEIJÃO E BATATAS FRITAS
+  (Rice, beans, and fries)
+
+- Premium Picanha (350g)      24.90€
+  Acompanhamento: BATATAS FRITAS, ARROZ, FEIJÃO
+  (Fries, rice, and beans)
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: MENU EXECUTIVO (BUSINESS LUNCH)
+--------------------------------------------------------------------------------
+
+Available: Monday to Friday lunches only, except holidays
+
+- Picanha no Prato            15.00€
+  ARROZ FEIJÃO E BATATAS FRITAS COM DIREITO A UMA BEBIDA E UM CAFÉ
+  (SUMO, ÁGUA OU IMPERIAL)
+  (Rice, beans, and fries with drink and coffee - juice, water, or beer)
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: MENU INFANTIL (CHILDREN'S MENU, AGES 4-9)
+--------------------------------------------------------------------------------
+
+- Frango à La Picanha         10.50€    (ARROZ E BATATAS FRITAS)
+- Picanha no Prato            10.50€    (ARROZ E BATATAS FRITAS)
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: SOBREMESAS (DESSERTS)
+--------------------------------------------------------------------------------
+
+- Cheesecake Oreo              5.00€
+- Cheesecake Frutos Vermelhos  4.50€    (Red berries cheesecake)
+- Cheesecake Caramelo Salgado  5.00€    (Salted caramel cheesecake)
+- Bolo Brigadeiro              4.50€    (Brigadeiro cake)
+- Cheesecake Lima              4.50€    (Lime cheesecake)
+- Bolo de Bolacha              4.50€    (Cookie cake)
+- Petit Gateau c/ Gelado       5.50€    (Petit gateau with ice cream)
+- Caixa Lisboetas             13.00€    (Lisbon box dessert) [PDF only]
+- Pudim                        4.50€    (Pudding)
+- Musse de Chocolate           4.50€    (Chocolate mousse)
+- Doce da Casa                 4.50€    (House sweet)
+- Bola de Gelado               2.50€    (Ice cream scoop)
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: CAFETÁRIA (COFFEE BAR)
+--------------------------------------------------------------------------------
+
+- Café                         1.20€
+- Descafeinado                 1.20€    (Decaf)
+- Chá                          1.50€    (Tea)
+- Abatanado                    1.50€    [PDF only]
+- Meia de Leite                2.00€    (Coffee with milk)
+- Irish Coffee                 5.00€
+- Café Bombom                  6.50€    [PDF only]
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: BEBIDAS (NON-ALCOHOLIC DRINKS)
+--------------------------------------------------------------------------------
+
+- Água Purificada              2.70€    (Purified water)
+- Águas com Gás Purificada     2.70€    (Purified sparkling water)
+- Água com Gás                 2.20€    (Sparkling water) [PDF only]
+- Água Garrafa 0.50cl          1.70€    (Bottled water 0.5L) [PDF only]
+- Ice Tea                      2.20€
+- Coca-Cola                    2.20€
+- Guaraná                      2.20€    [PDF only]
+- Sumol                        2.20€    [PDF only]
+- Compal                       2.00€    [PDF only]
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: CERVEJAS (BEERS)
+--------------------------------------------------------------------------------
+
+- Sagres                       2.20€
+- Sagres Preta                 2.50€    (Dark Sagres) [PDF only]
+- Sagres Zero                  2.50€    (Alcohol-free) [PDF only]
+- Sagres Bohemia               2.50€    [PDF only]
+- Bandida do Pomar             2.50€    (Craft beer) [PDF only]
+- Caneca Heineken              4.00€    (Heineken mug) [PDF only]
+- Imperial Heineken            2.50€    (Draft Heineken)
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: VINHO TINTO (RED WINES)
+--------------------------------------------------------------------------------
+
+- Dona Ermelinda              12.00€
+- Dona Ermelinda Reserva      15.00€
+- Ermelinda Syrah Reserva     16.00€
+- Quinta da Mimosa            17.00€
+- Herdade dos Grous           20.00€
+- Herdade dos Grous Reserva   45.00€
+- Assobio                     10.00€
+- Monte Velho                 12.00€
+- CARM                        13.00€
+- CARM Reserva                22.00€
+- Caiado                      12.00€
+- Touringa Nacional           17.00€
+- Altitude Reserva            25.00€
+- Pai Chão                    90.00€    (Premium - highest priced)
+- Papa Figos                  15.00€
+- Cartuxa                     35.00€
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: VINHO BRANCO (WHITE WINES)
+--------------------------------------------------------------------------------
+
+- Dona Ermelinda Reserva      15.00€
+- Herdade dos Grous           20.00€
+- Assobio                     12.00€
+- Monte Velho                 12.00€
+- Caiado                      12.00€
+- Touringa Nacional           17.00€
+- Papa Figos                  15.00€
+- Altitude Reserva            27.00€
+- Herdade dos Grous Reserva   30.00€
+- Caiado (alt)                12.00€
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: VINHO ROSÉ (ROSÉ WINES)
+--------------------------------------------------------------------------------
+
+- Mateus                      12.00€
+- Caiado Rosé                 10.00€
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: SANGRIAS
+--------------------------------------------------------------------------------
+
+                           1L         2L
+- Branca (White)          14.90€   21.90€
+- Tinta (Red)             14.90€   21.90€
+- Espumante (Sparkling)   17.90€   24.90€
+- Frutos Vermelhos        17.90€   24.90€    (Red berries)
+- Manga e Maracujá        17.90€   24.90€    (Mango passion fruit)
+- Tropical                17.90€   24.90€
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: BEBIDAS ALCOÓLICAS (SPIRITS)
+--------------------------------------------------------------------------------
+
+- Moscatel                     3.50€
+- Licor Beirão                 4.50€
+- Amêndoa Amarga               3.50€
+- CRF                          5.00€
+- Velho Terra                  4.50€
+- Malibu                       5.00€
+- Baileys                      5.00€
+- Macieira                     5.00€
+- Logan                       10.00€
+- Bushmills                    5.00€
+- Famous Grouse                5.00€
+- Jameson                      5.00€
+- Cutty Sark                   4.50€
+- J&B 15 Anos Reserva         12.00€
+
+
+--------------------------------------------------------------------------------
+LAPICANHA - MENU: COCKTAILS
+--------------------------------------------------------------------------------
+
+- Cocktail sem Álcool          6.00€    (Non-alcoholic cocktail)
+- Caipirinha                   6.00€
+- Caipiblack                   6.00€
+- Marguerita                   8.00€
+- Mojito                       8.00€
+- Apérol Spritz                6.00€
+- Martini                      3.50€
+- Bombay                       8.00€
+- Beefeater Pink               8.00€
+- Beefeater                    8.00€
+- Tanqueray                    8.00€
+
+
+================================================================================
+                       IMAGE ASSETS INVENTORY
+================================================================================
+
+--------------------------------------------------------------------------------
+CLIENT BUNDLED ASSETS - client/src/assets/ (30 files)
+--------------------------------------------------------------------------------
+
+CASA DE PEIXE IMAGES (17):
+- casa-da-peixe-1.jpg
+- casa-da-peixe-2.jpg
+- casa-da-peixe-3.jpg
+- casa-da-peixe-4.jpg
+- casa-da-peixe-5.jpg
+- casa-da-peixe-6.jpg
+- casa-da-peixe-7.jpg
+- casa-da-peixe-8.jpg
+- casa-da-peixe-9.jpg
+- casa-da-peixe-10.jpg
+- casa-da-peixe-11.jpg
+- casa-da-peixe-12.jpg
+- casa-da-peixe-13.jpg
+- casa-da-peixe-14.jpg
+- casa-da-peixe-15.jpg
+- casa-da-peixe-cover.jpg
+- casa-da-peixe-logo.jpg
+
+GENERIC GALLERY IMAGES (11):
+- gallery-1.jpg
+- gallery-2.jpg
+- gallery-3.jpg
+- gallery-4.jpg
+- gallery-5.jpg
+- gallery-6.jpg
+- gallery-7.jpg
+- gallery-8.jpg
+- gallery-9.jpg
+- gallery-10.jpg
+- gallery-11.jpg
+
+LAPICANHA IMAGES (2):
+- lapicanha-cover.jpg
+- lapicanha-hero.png
+
+
+--------------------------------------------------------------------------------
+RAW SOURCE ASSETS - attached_assets/ (70+ files)
+--------------------------------------------------------------------------------
+
+CASA DE PEIXE SOURCE PHOTOS (timestamped duplicates):
+- a1_*.jpg through a15_*.jpg (multiple versions)
+- f1_*.jpg through f10_*.jpg (food shots, multiple versions)
+
+BRANDING / LOGOS:
+- casa da peixe logo_1756230906091.jpg
+- orginal_1756232556458.jpg
+
+ORIGINAL PDF MENUS:
+- casa de _1756153177503.pdf                  (49 MB - Casa de Peixe full menu)
+- lapicanha_1756155283329.pdf                 (1.5 MB - Lapicanha full menu)
+
+AI-GENERATED SCENES:
+- 20250826_1937_Restaurant Dinner Scene_remix_*.png (2 versions)
+- 20250827_2018_Inviting Restaurant Exterior_remix_*.png
+
+MISC / DEV ASSETS:
+- WhatsApp Image 2025-08-28 at 14.10.51_9c6af4c7_1756383097021.jpg
+- Screenshot 2025-08-25 231957_*.png
+- Screenshot 2025-08-26 194205_*.png (multiple)
+- Screenshot 2025-08-26 204403_*.png
+- Screenshot 2025-08-26 204740_*.png
+- Screenshot 2025-08-26 205520_*.png
+- Screenshot 2025-08-26 211322_*.png
+- Screenshot 2025-08-26 212050_*.png
+- Screenshot 2025-08-28 143024_1756384251463.png
+- Screenshot_2026-04-07_133341_1775561688306.png
+- assortment-pieces-cake_114579-85732_1756384661320.avif
+- bug_1756155835288.png
+- bug_1756155982330.png
+- hjjj_1756154798098.jpg
+- sdssssss_1756234789755.jpg
+- jik_1756156245327.png
+- kil_1756153535059.png
+- kil_1756156172368.png
+- jjjjj_1756379615424.png
+- jkj_1756384544970.png
+- (various other dev/test files)
+
+
+--------------------------------------------------------------------------------
+RUNTIME UPLOAD DIRECTORY - uploads/
+--------------------------------------------------------------------------------
+
+(Empty at time of scrape - used by Multer for runtime image uploads)
+
+
+--------------------------------------------------------------------------------
+WORDPRESS EXPORT - wordpress-export/
+--------------------------------------------------------------------------------
+
+- casa-da-peixe-lapicanha-wordpress.tar.gz    (WordPress export archive)
+- casa-da-peixe-lapicanha-wordpress.zip       (WordPress export archive)
+- restaurant-data.php                         (Legacy PHP data file)
+- theme-colors.css                            (Theme color palette)
+- wordpress-conversion-guide.txt              (Conversion documentation)
+
+
+================================================================================
+                      EXTERNAL INTEGRATIONS & SERVICES
+================================================================================
+
+DATABASE SERVICES:
+- Neon Database (Serverless PostgreSQL)
+- @neondatabase/serverless driver
+- Drizzle ORM for type-safe operations
+
+UI LIBRARIES:
+- Radix UI (accessible React primitives)
+- Tailwind CSS
+- Lucide React (icons)
+- Class Variance Authority (component variants)
+
+FILE HANDLING:
+- Multer (multipart form data / file uploads)
+- Local filesystem storage (configurable upload directory)
+
+FORMS & VALIDATION:
+- React Hook Form
+- Zod (TypeScript-first schema validation)
+- @hookform/resolvers
+
+BUILD / DEV TOOLS:
+- Vite (fast dev server with HMR)
+- ESBuild (production bundling)
+- TypeScript (strict mode)
+- PostCSS + Autoprefixer
+
+GOOGLE SERVICES:
+- Google Maps (embedded restaurant location maps)
+- Requires: VITE_GOOGLE_MAPS_API_KEY environment variable
+
+UTILITIES:
+- date-fns (date manipulation)
+- nanoid (unique ID generation)
+- clsx (conditional className strings)
+
+
+================================================================================
+                           API ENDPOINTS / FEATURES
+================================================================================
+
+RESTAURANT MANAGEMENT:
+- GET/POST/PUT/DELETE operations for restaurants
+- Slug-based lookups
+
+MENU MANAGEMENT:
+- Category-based menu item management
+- Image upload support per menu item
+- Categories: starters, mains, desserts, drinks
+
+RESERVATIONS:
+- Create new reservation
+- Status tracking (pending, confirmed, etc.)
+- Fields: name, email, date, time, guests, special requests
+
+GALLERY MANAGEMENT:
+- Photo upload per restaurant
+- Metadata (title, description)
+
+FILE UPLOADS:
+- Dedicated endpoints for image processing
+- Image validation
+
+
+================================================================================
+                        AUTHENTICATION (CURRENT STATE)
+================================================================================
+
+- No authentication system currently implemented
+- Basic session configuration present but not actively used
+- Public access to uploaded images via Express static middleware
+- Admin page exists (client/src/pages/admin.tsx) but no auth guard
+
+
+================================================================================
+                              DATA SUMMARY
+================================================================================
+
+TOTAL RESTAURANTS          : 2
+TOTAL MENU ITEMS (seed)    : 128 (78 Casa + 50 Lapicanha)
+TOTAL MENU ITEMS (PDF)     : 200+ (including full wine/spirits lists)
+
+CASA DE PEIXE TOTALS:
+- Starters/Couvert/Soups   : 19+ items
+- Grilled fish portions    : 10 items
+- Grilled fish by weight   : 5 items
+- Sides                    : 3 items
+- Meat dishes              : 5 items
+- Tachos & Pratos          : 12 items
+- Desserts                 : 10 items
+- Coffee                   : 7 items
+- Non-alcoholic drinks     : 9 items
+- Beers                    : 5 items
+- Sangrias                 : 4 varieties (1L + 2L)
+- House wine pitchers      : 2 types x 3 sizes
+- Spirits                  : 12 items
+- Cocktails                : 11 items
+- Red wines                : 30 varieties
+- White wines              : 28 varieties
+- Rosé wines               : 4 varieties
+- Vinho Verde              : 4 varieties
+
+LAPICANHA TOTALS:
+- Starters                 : 8 items
+- Main dishes              : 7 items
+- Premium cuts (Nacos)     : 2 items
+- Executive menu           : 1 item
+- Children's menu          : 2 items
+- Desserts                 : 12 items
+- Coffee                   : 7 items
+- Non-alcoholic drinks     : 9 items
+- Beers                    : 7 items
+- Red wines                : 16 varieties
+- White wines              : 10 varieties
+- Rosé wines               : 2 varieties
+- Sangrias                 : 6 flavors (1L + 2L)
+- Spirits                  : 14 items
+- Cocktails                : 11 items
+
+
+================================================================================
+                          IMPORTANT NOTES & CONFLICTS
+================================================================================
+
+1. DATA DISCREPANCY (Lapicanha address):
+   - Current seed.ts + PDF: Setúbal, Portugal
+   - Old WordPress export:  Lisboa, Portugal
+   - TRUST: seed.ts (current production data)
+
+2. MENU ITEM IMAGES (seed.ts):
+   All imageUrl fields in seed.ts point to Unsplash stock photos, NOT actual
+   restaurant photography. Real restaurant photos exist in client/src/assets/
+   but are not linked to individual menu items in the seed data.
+
+3. PDF MENU vs SEED DATA:
+   The seed.ts files contain a SUBSET of items from the original PDFs. The PDFs
+   contain many additional items (full wine list, spirits, cocktails, extra
+   starters) that were never added to the database seed.
+
+4. GALLERY PHOTOS TABLE:
+   The gallery_photos database table is defined in schema but has NO seed data.
+   Gallery photos are currently served from static client/src/assets/ imports.
+
+5. WASTE TAX (Lapicanha):
+   Unique policy where customers can be charged extra if they order too many
+   refills of all-you-can-eat picanha without consuming them.
+
+
+================================================================================
+                              END OF DOCUMENT
+================================================================================
+
+Data scraped from:
+- /Aman-Bhaiya-Restaurent/shared/schema.ts
+- /Aman-Bhaiya-Restaurent/server/seed.ts
+- /Aman-Bhaiya-Restaurent/server/storage.ts
+- /Aman-Bhaiya-Restaurent/replit.md
+- /Aman-Bhaiya-Restaurent/attached_assets/casa de _1756153177503.pdf
+- /Aman-Bhaiya-Restaurent/attached_assets/lapicanha_1756155283329.pdf
+- /Aman-Bhaiya-Restaurent/wordpress-export/restaurant-data.php
+- /Aman-Bhaiya-Restaurent/client/src/assets/ (file listing)
+- /Aman-Bhaiya-Restaurent/attached_assets/ (file listing)
+
+Scrape date: 2026-04-10
