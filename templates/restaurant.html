@@ -4,23 +4,46 @@
 
 {% block content %}
 
-<section class="restaurant-hero" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }}; background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)), url('{{ url_for('static', filename=r.hero_image) }}');">
-    <div class="container">
-        <span class="restaurant-hero-emoji">{{ r.hero_emoji }}</span>
-        <h1 class="restaurant-hero-title">{{ r.name }}</h1>
-        <p class="restaurant-hero-tagline">{{ r.tagline }}</p>
+<section class="restaurant-hero" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
+    <div class="hero-cover-bg" style="background-image: url('{{ url_for('static', filename=r.hero_image) }}');"></div>
+    <div class="hero-cover-overlay"></div>
+
+    <nav class="hero-breadcrumb">
+        <a href="{{ url_for('home') }}">Home</a>
+        <span class="hero-breadcrumb-sep">/</span>
+        <span>{{ r.short_name }}</span>
+    </nav>
+
+    <div class="container hero-cover-content">
+        <p class="hero-cover-eyebrow">
+            <span class="eyebrow-dash"></span>
+            {{ r.type }}
+            <span class="eyebrow-dash"></span>
+        </p>
+        <h1 class="hero-cover-title">{{ r.name }}</h1>
+        <p class="hero-cover-tagline">{{ r.tagline }}</p>
         {% if r.sub_tagline %}
-            <p class="restaurant-hero-sub">— {{ r.sub_tagline }} —</p>
+            <p class="hero-cover-sub">{{ r.sub_tagline }}</p>
         {% endif %}
-        <div class="restaurant-hero-actions">
-            <a href="#menu" class="btn btn-gold">View Menu</a>
+        <div class="hero-cover-actions">
+            <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-gold btn-lg">Reserve a Table</a>
+            <a href="#menu" class="btn btn-outline-light">View Menu</a>
             <a href="#gallery" class="btn btn-outline-light">Gallery</a>
-            <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-outline-light">Reserve</a>
+        </div>
+        <div class="hero-cover-meta">
+            <span>📍 {{ r.address_line_1 }}</span>
+            <span class="hero-cover-meta-sep"></span>
+            <span>📞 {{ r.phone }}</span>
         </div>
     </div>
+
+    <a href="#welcome" class="hero-scroll-indicator" aria-label="Scroll down">
+        <span class="hero-scroll-line"></span>
+        <span class="hero-scroll-text">SCROLL</span>
+    </a>
 </section>
 
-<section class="section">
+<section class="section" id="welcome">
     <div class="container">
         <div class="restaurant-intro">
             <div>

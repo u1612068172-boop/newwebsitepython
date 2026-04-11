@@ -4,56 +4,110 @@
 
 {% block content %}
 
-<section class="hero-home" style="background-image: linear-gradient(rgba(20,10,5,0.72), rgba(20,10,5,0.78)), url('{{ url_for('static', filename='images/lapicanha-hero.png') }}');">
-    <div class="hero-home-bg"></div>
-    <div class="container hero-home-content">
-        <p class="hero-eyebrow">★ Two Authentic Portuguese Restaurants ★</p>
-        <h1 class="hero-title">Casa de Peixe <span class="hero-amp">&amp;</span> Lapicanha</h1>
-        <p class="hero-sub">A Taste of Portugal in the Heart of Setúbal</p>
-        <p class="hero-desc">From the freshest seafood of the Atlantic coast to premium grilled picanha — experience two distinct dining traditions, each with its own authentic Portuguese soul.</p>
-        <div class="hero-ctas">
-            <a href="#restaurants" class="btn btn-gold">Explore Restaurants</a>
-            <a href="{{ url_for('reservations') }}" class="btn btn-outline">Reserve a Table</a>
+<section class="hero-home">
+    <div class="hero-bg-layer"></div>
+    <div class="container hero-grid">
+        <div class="hero-left">
+            <p class="hero-eyebrow">
+                <span class="eyebrow-line"></span>
+                <span class="eyebrow-star">★</span>
+                Setúbal · Portugal
+                <span class="eyebrow-star">★</span>
+                <span class="eyebrow-line"></span>
+            </p>
+            <h1 class="hero-title">
+                <span class="title-line-1">Casa de Peixe</span>
+                <span class="title-amp">&amp;</span>
+                <span class="title-line-2">Lapicanha</span>
+            </h1>
+            <p class="hero-sub">A Taste of Portugal in the Heart of Setúbal</p>
+            <p class="hero-desc">From the freshest seafood of the Atlantic coast to premium grilled picanha — two distinct dining traditions, one authentic Portuguese soul.</p>
+            <div class="hero-ctas">
+                <a href="{{ url_for('reservations') }}" class="btn btn-gold">Reserve a Table</a>
+                <a href="#restaurants" class="btn btn-outline">Explore Restaurants</a>
+            </div>
+            <div class="hero-stats">
+                <div><strong>2</strong><span>Restaurants</span></div>
+                <div class="hero-stats-div"></div>
+                <div><strong>200+</strong><span>Dishes</span></div>
+                <div class="hero-stats-div"></div>
+                <div><strong>60+</strong><span>Wines</span></div>
+            </div>
         </div>
+        <div class="hero-right">
+            <div class="hero-image-card hero-image-top">
+                <img src="{{ url_for('static', filename='images/gallery-2.jpg') }}" alt="Picanha spread with sides and wine at Lapicanha" loading="eager">
+                <span class="hero-image-label">Lapicanha</span>
+            </div>
+            <div class="hero-image-card hero-image-bottom">
+                <img src="{{ url_for('static', filename='images/casa-da-peixe-5.jpg') }}" alt="Artisanal seafood platter at Casa de Peixe" loading="eager">
+                <span class="hero-image-label">Casa de Peixe</span>
+            </div>
+            <div class="hero-badge">
+                <div class="hero-badge-inner">
+                    <span class="hero-badge-star">★</span>
+                    <span class="hero-badge-text">EST<br>2020</span>
+                    <span class="hero-badge-star">★</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-scroll">
+        <span class="hero-scroll-line"></span>
+        <span class="hero-scroll-text">SCROLL</span>
     </div>
 </section>
 
-<section class="section" id="restaurants">
+<section class="section section-showcase" id="restaurants">
     <div class="container">
-        <h2 class="section-title">Our Restaurants</h2>
-        <p class="section-sub">Choose your Portuguese adventure</p>
+        <header class="showcase-header">
+            <p class="showcase-eyebrow">
+                <span class="showcase-dash"></span>
+                Our Restaurants
+                <span class="showcase-dash"></span>
+            </p>
+            <h2 class="showcase-title">Two Houses, One Soul</h2>
+            <p class="showcase-sub">Neighbours on Rua &amp; Largo José Afonso — each a celebration of a distinct Portuguese tradition.</p>
+        </header>
 
-        <div class="restaurant-grid">
+        <div class="showcases">
             {% for r in restaurants %}
-            <article class="restaurant-card" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
-                {% if r.hero_image %}
-                    <div class="card-image">
+            <article class="showcase-item {% if loop.index0 % 2 == 1 %}showcase-reverse{% endif %}"
+                     style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
+                <div class="showcase-media">
+                    <span class="showcase-number">{{ "%02d"|format(loop.index) }}</span>
+                    <div class="showcase-frame"></div>
+                    <div class="showcase-image">
                         <img src="{{ url_for('static', filename=r.hero_image) }}" alt="{{ r.name }}" loading="lazy">
+                        <span class="showcase-image-label">
+                            <span class="label-dash"></span>
+                            {{ r.hero_emoji }} {{ r.short_name }}
+                        </span>
                     </div>
-                {% endif %}
-                <div class="card-header">
-                    <span class="card-emoji">{{ r.hero_emoji }}</span>
-                    <h3 class="card-name">{{ r.name }}</h3>
-                    <p class="card-tagline">{{ r.tagline }}</p>
-                    {% if r.sub_tagline %}
-                        <p class="card-subtagline">{{ r.sub_tagline }}</p>
-                    {% endif %}
                 </div>
-                <div class="card-body">
-                    <p class="card-desc">{{ r.description }}</p>
-                    <div class="card-meta">
-                        <div class="meta-item">
-                            <strong>📍 Address</strong>
+                <div class="showcase-content">
+                    <p class="showcase-item-eyebrow">
+                        <span class="eyebrow-dot"></span> {{ r.type }}
+                    </p>
+                    <h3 class="showcase-name">{{ r.name }}</h3>
+                    <p class="showcase-tagline">{{ r.tagline }}</p>
+                    {% if r.sub_tagline %}
+                        <p class="showcase-subtagline">— {{ r.sub_tagline }} —</p>
+                    {% endif %}
+                    <p class="showcase-desc">{{ r.description }}</p>
+                    <div class="showcase-meta">
+                        <div class="showcase-meta-item">
+                            <strong>Address</strong>
                             <span>{{ r.address_line_1 }}<br>{{ r.address_line_2 }}</span>
                         </div>
-                        <div class="meta-item">
-                            <strong>📞 Phone</strong>
-                            <span>{{ r.phone }}</span>
+                        <div class="showcase-meta-item">
+                            <strong>Phone</strong>
+                            <span><a href="tel:{{ r.phone }}">{{ r.phone }}</a></span>
                         </div>
                     </div>
-                    <div class="card-actions">
-                        <a href="{{ url_for('restaurant', slug=r.id) }}" class="btn btn-primary">Visit Restaurant</a>
-                        <a href="{{ url_for('menu', slug=r.id) }}" class="btn btn-outline-dark">See Menu</a>
+                    <div class="showcase-actions">
+                        <a href="{{ url_for('restaurant', slug=r.id) }}" class="btn btn-primary">Discover {{ r.short_name }}</a>
+                        <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-outline-dark">Reserve a Table</a>
                     </div>
                 </div>
             </article>
