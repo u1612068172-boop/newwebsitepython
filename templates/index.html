@@ -11,7 +11,7 @@
             <p class="hero-eyebrow">
                 <span class="eyebrow-line"></span>
                 <span class="eyebrow-star">★</span>
-                Setúbal · Portugal
+                <span data-i18n="hero_eyebrow">Setúbal · Portugal</span>
                 <span class="eyebrow-star">★</span>
                 <span class="eyebrow-line"></span>
             </p>
@@ -20,18 +20,18 @@
                 <span class="title-amp">&amp;</span>
                 <span class="title-line-2">Lapicanha</span>
             </h1>
-            <p class="hero-sub">A Taste of Portugal in the Heart of Setúbal</p>
-            <p class="hero-desc">From the freshest seafood of the Atlantic coast to premium grilled picanha — two distinct dining traditions, one authentic Portuguese soul.</p>
+            <p class="hero-sub" data-i18n="hero_sub">A Taste of Portugal in the Heart of Setúbal</p>
+            <p class="hero-desc" data-i18n="hero_desc">From the freshest seafood of the Atlantic coast to premium grilled picanha — two distinct dining traditions, one authentic Portuguese soul.</p>
             <div class="hero-ctas">
-                <a href="{{ url_for('reservations') }}" class="btn btn-gold">Reserve a Table</a>
-                <a href="#restaurants" class="btn btn-outline">Explore Restaurants</a>
+                <a href="{{ url_for('reservations') }}" class="btn btn-gold" data-i18n="hero_reserve">Reserve a Table</a>
+                <a href="#restaurants" class="btn btn-outline" data-i18n="hero_explore">Explore Restaurants</a>
             </div>
             <div class="hero-stats">
-                <div><strong>2</strong><span>Restaurants</span></div>
+                <div><strong>2</strong><span data-i18n="hero_restaurants">Restaurants</span></div>
                 <div class="hero-stats-div"></div>
-                <div><strong>200+</strong><span>Dishes</span></div>
+                <div><strong>200+</strong><span data-i18n="hero_dishes">Dishes</span></div>
                 <div class="hero-stats-div"></div>
-                <div><strong>60+</strong><span>Wines</span></div>
+                <div><strong>60+</strong><span data-i18n="hero_wines">Wines</span></div>
             </div>
         </div>
         <div class="hero-right">
@@ -54,7 +54,7 @@
     </div>
     <div class="hero-scroll">
         <span class="hero-scroll-line"></span>
-        <span class="hero-scroll-text">SCROLL</span>
+        <span class="hero-scroll-text" data-i18n="hero_scroll">SCROLL</span>
     </div>
 </section>
 
@@ -63,11 +63,11 @@
         <header class="showcase-header">
             <p class="showcase-eyebrow">
                 <span class="showcase-dash"></span>
-                Our Restaurants
+                <span data-i18n="showcase_eyebrow">Our Restaurants</span>
                 <span class="showcase-dash"></span>
             </p>
-            <h2 class="showcase-title">Two Houses, One Soul</h2>
-            <p class="showcase-sub">Neighbours on Rua &amp; Largo José Afonso — each a celebration of a distinct Portuguese tradition.</p>
+            <h2 class="showcase-title" data-i18n="showcase_title">Two Houses, One Soul</h2>
+            <p class="showcase-sub" data-i18n="showcase_sub">Neighbours on Rua &amp; Largo José Afonso — each a celebration of a distinct Portuguese tradition.</p>
         </header>
 
         <div class="showcases">
@@ -87,27 +87,27 @@
                 </div>
                 <div class="showcase-content">
                     <p class="showcase-item-eyebrow">
-                        <span class="eyebrow-dot"></span> {{ r.type }}
+                        <span class="eyebrow-dot"></span> <span data-i18n="r_{{ r.id|replace('-','_') }}_type">{{ r.type }}</span>
                     </p>
                     <h3 class="showcase-name">{{ r.name }}</h3>
-                    <p class="showcase-tagline">{{ r.tagline }}</p>
+                    <p class="showcase-tagline" data-i18n="r_{{ r.id|replace('-','_') }}_tagline">{{ r.tagline }}</p>
                     {% if r.sub_tagline %}
-                        <p class="showcase-subtagline">— {{ r.sub_tagline }} —</p>
+                        <p class="showcase-subtagline">— <span data-i18n="r_{{ r.id|replace('-','_') }}_sub_tagline">{{ r.sub_tagline }}</span> —</p>
                     {% endif %}
-                    <p class="showcase-desc">{{ r.description }}</p>
+                    <p class="showcase-desc" data-i18n="r_{{ r.id|replace('-','_') }}_description">{{ r.description }}</p>
                     <div class="showcase-meta">
                         <div class="showcase-meta-item">
-                            <strong>Address</strong>
+                            <strong data-i18n="showcase_address">Address</strong>
                             <span>{{ r.address_line_1 }}<br>{{ r.address_line_2 }}</span>
                         </div>
                         <div class="showcase-meta-item">
-                            <strong>Phone</strong>
+                            <strong data-i18n="showcase_phone">Phone</strong>
                             <span><a href="tel:{{ r.phone }}">{{ r.phone }}</a></span>
                         </div>
                     </div>
                     <div class="showcase-actions">
-                        <a href="{{ url_for('restaurant', slug=r.id) }}" class="btn btn-primary">Discover {{ r.short_name }}</a>
-                        <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-outline-dark">Reserve a Table</a>
+                        <a href="{{ url_for('restaurant', slug=r.id) }}" class="btn btn-primary" data-i18n-prefix="showcase_discover" data-i18n-suffix="{{ r.short_name }}">Discover {{ r.short_name }}</a>
+                        <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-outline-dark" data-i18n="showcase_reserve">Reserve a Table</a>
                     </div>
                 </div>
             </article>
@@ -120,18 +120,18 @@
     <div class="container">
         <div class="about-split">
             <div>
-                <h2 class="section-title text-left">About Us</h2>
-                <p class="lead">Two restaurants. One passion. Authentic Portugal.</p>
-                <p>Located on the historic Rua & Largo José Afonso in Setúbal, our two restaurants sit as neighbours — each a celebration of a different facet of Portuguese cuisine.</p>
-                <p><strong>Original's Casa de Peixe</strong> brings you the freshest catch from the Atlantic — sea bream, cod, octopus, prawns — cooked with recipes passed down through generations of coastal cooks.</p>
-                <p><strong>Lapicanha</strong> is our premium grill house. We specialize in perfectly prepared picanha and other prime cuts, paired with authentic Portuguese sides, wines, and a warm, rustic atmosphere.</p>
-                <a href="{{ url_for('reservations') }}" class="btn btn-primary">Book Your Table</a>
+                <h2 class="section-title text-left" data-i18n="about_title">About Us</h2>
+                <p class="lead" data-i18n="about_lead">Two restaurants. One passion. Authentic Portugal.</p>
+                <p data-i18n="about_p1">Located on the historic Rua & Largo José Afonso in Setúbal, our two restaurants sit as neighbours — each a celebration of a different facet of Portuguese cuisine.</p>
+                <p data-i18n="about_p2_casa"><strong>Original's Casa de Peixe</strong> brings you the freshest catch from the Atlantic — sea bream, cod, octopus, prawns — cooked with recipes passed down through generations of coastal cooks.</p>
+                <p data-i18n="about_p2_lapicanha"><strong>Lapicanha</strong> is our premium grill house. We specialize in perfectly prepared picanha and other prime cuts, paired with authentic Portuguese sides, wines, and a warm, rustic atmosphere.</p>
+                <a href="{{ url_for('reservations') }}" class="btn btn-primary" data-i18n="about_book">Book Your Table</a>
             </div>
             <div class="about-stats">
-                <div class="stat"><span class="stat-num">2</span><span class="stat-label">Restaurants</span></div>
-                <div class="stat"><span class="stat-num">200+</span><span class="stat-label">Menu Items</span></div>
-                <div class="stat"><span class="stat-num">60+</span><span class="stat-label">Wines</span></div>
-                <div class="stat"><span class="stat-num">1</span><span class="stat-label">Passion</span></div>
+                <div class="stat"><span class="stat-num">2</span><span class="stat-label" data-i18n="hero_restaurants">Restaurants</span></div>
+                <div class="stat"><span class="stat-num">200+</span><span class="stat-label" data-i18n="about_menu_items">Menu Items</span></div>
+                <div class="stat"><span class="stat-num">60+</span><span class="stat-label" data-i18n="hero_wines">Wines</span></div>
+                <div class="stat"><span class="stat-num">1</span><span class="stat-label" data-i18n="about_passion">Passion</span></div>
             </div>
         </div>
     </div>
@@ -139,9 +139,9 @@
 
 <section class="section section-dark">
     <div class="container text-center">
-        <h2 class="section-title light">Visit Us in Setúbal</h2>
-        <p class="section-sub light">Both restaurants are located on Rua/Largo José Afonso — come for lunch at Casa de Peixe, return for dinner at Lapicanha.</p>
-        <a href="{{ url_for('reservations') }}" class="btn btn-gold btn-lg">Make a Reservation</a>
+        <h2 class="section-title light" data-i18n="visit_title">Visit Us in Setúbal</h2>
+        <p class="section-sub light" data-i18n="visit_sub">Both restaurants are located on Rua/Largo José Afonso — come for lunch at Casa de Peixe, return for dinner at Lapicanha.</p>
+        <a href="{{ url_for('reservations') }}" class="btn btn-gold btn-lg" data-i18n="visit_reserve">Make a Reservation</a>
     </div>
 </section>
 

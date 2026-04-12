@@ -7,8 +7,8 @@
 <section class="page-hero" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
     <div class="container">
         <p class="page-eyebrow">{{ r.short_name }}</p>
-        <h1>Contact & Location</h1>
-        <p class="page-sub">We'd love to hear from you</p>
+        <h1 data-i18n="contact_title">Contact & Location</h1>
+        <p class="page-sub" data-i18n="contact_sub">We'd love to hear from you</p>
     </div>
 </section>
 
@@ -16,42 +16,42 @@
     <div class="container">
         <div class="contact-grid">
             <div class="contact-info">
-                <h2>Get in Touch</h2>
+                <h2 data-i18n="contact_get_in_touch">Get in Touch</h2>
 
                 <div class="contact-block">
-                    <h3>📍 Address</h3>
+                    <h3>📍 <span data-i18n="contact_address">Address</span></h3>
                     <p>{{ r.address_line_1 }}<br>{{ r.address_line_2 }}</p>
                 </div>
 
                 <div class="contact-block">
-                    <h3>📞 Phone</h3>
+                    <h3>📞 <span data-i18n="contact_phone">Phone</span></h3>
                     <p><a href="tel:{{ r.phone }}">{{ r.phone }}</a></p>
                 </div>
 
                 {% if r.whatsapp %}
                 <div class="contact-block">
-                    <h3>💬 WhatsApp</h3>
+                    <h3>💬 <span data-i18n="contact_whatsapp">WhatsApp</span></h3>
                     <p><a href="https://wa.me/{{ r.whatsapp|replace('+','')|replace(' ','') }}" target="_blank" rel="noopener">{{ r.whatsapp }}</a></p>
                 </div>
                 {% endif %}
 
                 <div class="contact-block">
-                    <h3>✉️ Email</h3>
+                    <h3>✉️ <span data-i18n="contact_email">Email</span></h3>
                     <p><a href="mailto:{{ r.email }}">{{ r.email }}</a></p>
                 </div>
 
                 {% if r.instagram_url %}
                 <div class="contact-block">
-                    <h3>📸 Instagram</h3>
+                    <h3>📸 <span data-i18n="contact_instagram">Instagram</span></h3>
                     <p><a href="{{ r.instagram_url }}" target="_blank" rel="noopener">{{ r.instagram }}</a></p>
                 </div>
                 {% endif %}
 
                 <div class="contact-block">
-                    <h3>🕒 Hours</h3>
+                    <h3>🕒 <span data-i18n="contact_hours">Hours</span></h3>
                     <ul class="hours-inline">
                         {% for day, time in r.hours %}
-                            <li><span>{{ day }}</span><span>{{ time }}</span></li>
+                            <li><span data-i18n="day_{{ day|lower }}">{{ day }}</span><span {% if time == 'CLOSED' %}data-i18n="day_closed"{% endif %}>{{ time }}</span></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -69,7 +69,7 @@
                         referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
                 </div>
-                <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-primary btn-block">Reserve a Table</a>
+                <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-primary btn-block" data-i18n="contact_reserve">Reserve a Table</a>
             </div>
         </div>
     </div>

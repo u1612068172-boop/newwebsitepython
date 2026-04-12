@@ -7,8 +7,8 @@
 <section class="page-hero" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
     <div class="container">
         <p class="page-eyebrow">{{ r.short_name }}</p>
-        <h1>Our Menu</h1>
-        <p class="page-sub">{{ r.tagline }}</p>
+        <h1 data-i18n="menu_title">Our Menu</h1>
+        <p class="page-sub" data-i18n="r_{{ r.id|replace('-','_') }}_tagline">{{ r.tagline }}</p>
     </div>
 </section>
 
@@ -41,8 +41,8 @@
         {% endfor %}
 
         <div class="menu-footer">
-            <p><em>All prices include VAT. Menu and prices subject to change without notice.</em></p>
-            <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-primary">Reserve a Table</a>
+            <p><em data-i18n="menu_footer">All prices include VAT. Menu and prices subject to change without notice.</em></p>
+            <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-primary" data-i18n="menu_reserve">Reserve a Table</a>
         </div>
     </div>
 </section>

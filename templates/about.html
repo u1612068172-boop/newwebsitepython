@@ -6,23 +6,23 @@
 
 <section class="page-hero">
     <div class="container">
-        <p class="page-eyebrow">Our Story</p>
-        <h1>About Our Restaurants</h1>
-        <p class="page-sub">Two authentic Portuguese dining experiences in Setúbal</p>
+        <p class="page-eyebrow" data-i18n="aboutp_eyebrow">Our Story</p>
+        <h1 data-i18n="aboutp_title">About Our Restaurants</h1>
+        <p class="page-sub" data-i18n="aboutp_sub">Two authentic Portuguese dining experiences in Setúbal</p>
     </div>
 </section>
 
 <section class="section">
     <div class="container about-content">
-        <p class="lead">Welcome — home to two beloved Portuguese establishments in the heart of Setúbal.</p>
-        <p>Located neighbours on the historic Rua & Largo José Afonso, our restaurants offer visitors the chance to experience two distinct facets of Portuguese cuisine: the bounty of the Atlantic coast and the tradition of the rustic grill.</p>
+        <p class="lead" data-i18n="aboutp_lead">Welcome — home to two beloved Portuguese establishments in the heart of Setúbal.</p>
+        <p data-i18n="aboutp_desc">Located neighbours on the historic Rua & Largo José Afonso, our restaurants offer visitors the chance to experience two distinct facets of Portuguese cuisine: the bounty of the Atlantic coast and the tradition of the rustic grill.</p>
 
         {% for r in restaurants %}
         <div class="about-restaurant">
             <h2>{{ r.hero_emoji }} {{ r.name }}</h2>
-            <p class="tagline">{{ r.tagline }}</p>
-            <p>{{ r.description }}</p>
-            <a href="{{ url_for('restaurant', slug=r.id) }}" class="btn btn-primary">Visit {{ r.short_name }}</a>
+            <p class="tagline" data-i18n="r_{{ r.id|replace('-','_') }}_tagline">{{ r.tagline }}</p>
+            <p data-i18n="r_{{ r.id|replace('-','_') }}_description">{{ r.description }}</p>
+            <a href="{{ url_for('restaurant', slug=r.id) }}" class="btn btn-primary" data-i18n-prefix="aboutp_visit" data-i18n-suffix="{{ r.short_name }}">Visit {{ r.short_name }}</a>
         </div>
         {% endfor %}
     </div>

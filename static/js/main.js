@@ -107,7 +107,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Update counts & totals
-            cartCount.textContent = count + (count === 1 ? ' item' : ' items');
+            var itemWord = count === 1 ? (typeof t === 'function' ? t('order_item') : 'item') : (typeof t === 'function' ? t('order_items') : 'items');
+            cartCount.textContent = count + ' ' + itemWord;
             cartTotalAmount.textContent = '\u20AC' + total.toFixed(2);
 
             if (mobileCartBadge) mobileCartBadge.textContent = count;
@@ -160,12 +161,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 renderCart();
 
                 // Button feedback
-                const original = this.textContent;
-                this.textContent = 'Added!';
+                var addText = typeof t === 'function' ? t('order_add') : '+ Add';
+                this.textContent = '\u2713';
                 this.classList.add('added');
-                setTimeout(() => {
-                    this.textContent = original;
-                    this.classList.remove('added');
+                var btn = this;
+                setTimeout(function () {
+                    btn.textContent = addText;
+                    btn.classList.remove('added');
                 }, 600);
             });
         });

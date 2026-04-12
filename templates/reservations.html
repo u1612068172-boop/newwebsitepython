@@ -6,9 +6,9 @@
 
 <section class="page-hero">
     <div class="container">
-        <p class="page-eyebrow">Book Your Experience</p>
-        <h1>Reserve a Table</h1>
-        <p class="page-sub">At either of our two Setúbal restaurants</p>
+        <p class="page-eyebrow" data-i18n="res_eyebrow">Book Your Experience</p>
+        <h1 data-i18n="res_title">Reserve a Table</h1>
+        <p class="page-sub" data-i18n="res_sub">At either of our two Setúbal restaurants</p>
     </div>
 </section>
 
@@ -17,9 +17,9 @@
         <div class="reservation-wrap">
             <form method="POST" action="{{ url_for('reservations') }}" class="reservation-form">
                 <div class="form-row">
-                    <label for="restaurant_id">Restaurant <span class="required">*</span></label>
+                    <label for="restaurant_id"><span data-i18n="res_restaurant">Restaurant</span> <span class="required">*</span></label>
                     <select name="restaurant_id" id="restaurant_id" required>
-                        <option value="">— Choose a restaurant —</option>
+                        <option value="" data-i18n="res_choose">— Choose a restaurant —</option>
                         {% for r in restaurants %}
                             <option value="{{ r.id }}"
                                 {% if selected and selected.id == r.id %}selected
@@ -32,54 +32,54 @@
 
                 <div class="form-grid">
                     <div class="form-row">
-                        <label for="name">Full Name <span class="required">*</span></label>
+                        <label for="name"><span data-i18n="res_name">Full Name</span> <span class="required">*</span></label>
                         <input type="text" id="name" name="name" required value="{{ form.name or '' }}">
                     </div>
                     <div class="form-row">
-                        <label for="email">Email <span class="required">*</span></label>
+                        <label for="email"><span data-i18n="res_email">Email</span> <span class="required">*</span></label>
                         <input type="email" id="email" name="email" required value="{{ form.email or '' }}">
                     </div>
                 </div>
 
                 <div class="form-grid">
                     <div class="form-row">
-                        <label for="phone">Phone</label>
+                        <label for="phone" data-i18n="res_phone">Phone</label>
                         <input type="tel" id="phone" name="phone" value="{{ form.phone or '' }}">
                     </div>
                     <div class="form-row">
-                        <label for="guests">Number of Guests <span class="required">*</span></label>
+                        <label for="guests"><span data-i18n="res_guests">Number of Guests</span> <span class="required">*</span></label>
                         <input type="number" id="guests" name="guests" min="1" max="30" required value="{{ form.guests or '2' }}">
                     </div>
                 </div>
 
                 <div class="form-grid">
                     <div class="form-row">
-                        <label for="date">Date <span class="required">*</span></label>
+                        <label for="date"><span data-i18n="res_date">Date</span> <span class="required">*</span></label>
                         <input type="date" id="date" name="date" required value="{{ form.date or '' }}">
                     </div>
                     <div class="form-row">
-                        <label for="time">Time <span class="required">*</span></label>
+                        <label for="time"><span data-i18n="res_time">Time</span> <span class="required">*</span></label>
                         <input type="time" id="time" name="time" required value="{{ form.time or '' }}">
                     </div>
                 </div>
 
                 <div class="form-row">
-                    <label for="special_requests">Special Requests</label>
-                    <textarea id="special_requests" name="special_requests" rows="4" placeholder="Dietary restrictions, seating preferences, special occasions...">{{ form.special_requests or '' }}</textarea>
+                    <label for="special_requests" data-i18n="res_special">Special Requests</label>
+                    <textarea id="special_requests" name="special_requests" rows="4" data-i18n="res_special_placeholder" data-i18n-placeholder="true" placeholder="Dietary restrictions, seating preferences, special occasions...">{{ form.special_requests or '' }}</textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-lg btn-block">Confirm Reservation</button>
-                <p class="form-note">* Required fields. We'll confirm your reservation by email shortly.</p>
+                <button type="submit" class="btn btn-primary btn-lg btn-block" data-i18n="res_submit">Confirm Reservation</button>
+                <p class="form-note" data-i18n="res_note">* Required fields. We'll confirm your reservation by email shortly.</p>
             </form>
 
             <aside class="reservation-aside">
-                <h3>Choosing a Restaurant?</h3>
+                <h3 data-i18n="res_choosing">Choosing a Restaurant?</h3>
                 {% for r in restaurants %}
                     <div class="aside-card" style="--r-primary: {{ r.theme.primary }};">
                         <h4>{{ r.hero_emoji }} {{ r.name }}</h4>
-                        <p class="tagline">{{ r.tagline }}</p>
-                        <p class="mini">{{ r.description[:120] }}…</p>
-                        <a href="{{ url_for('restaurant', slug=r.id) }}">Learn more →</a>
+                        <p class="tagline" data-i18n="r_{{ r.id|replace('-','_') }}_tagline">{{ r.tagline }}</p>
+                        <p class="mini" data-i18n="r_{{ r.id|replace('-','_') }}_description">{{ r.description[:120] }}…</p>
+                        <a href="{{ url_for('restaurant', slug=r.id) }}" data-i18n="res_learn_more">Learn more →</a>
                     </div>
                 {% endfor %}
             </aside>

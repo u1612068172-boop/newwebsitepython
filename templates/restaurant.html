@@ -9,7 +9,7 @@
     <div class="hero-cover-overlay"></div>
 
     <nav class="hero-breadcrumb">
-        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('home') }}" data-i18n="nav_home">Home</a>
         <span class="hero-breadcrumb-sep">/</span>
         <span>{{ r.short_name }}</span>
     </nav>
@@ -17,18 +17,18 @@
     <div class="container hero-cover-content">
         <p class="hero-cover-eyebrow">
             <span class="eyebrow-dash"></span>
-            {{ r.type }}
+            <span data-i18n="r_{{ r.id|replace('-','_') }}_type">{{ r.type }}</span>
             <span class="eyebrow-dash"></span>
         </p>
         <h1 class="hero-cover-title">{{ r.name }}</h1>
-        <p class="hero-cover-tagline">{{ r.tagline }}</p>
+        <p class="hero-cover-tagline" data-i18n="r_{{ r.id|replace('-','_') }}_tagline">{{ r.tagline }}</p>
         {% if r.sub_tagline %}
-            <p class="hero-cover-sub">{{ r.sub_tagline }}</p>
+            <p class="hero-cover-sub" data-i18n="r_{{ r.id|replace('-','_') }}_sub_tagline">{{ r.sub_tagline }}</p>
         {% endif %}
         <div class="hero-cover-actions">
-            <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-gold btn-lg">Reserve a Table</a>
-            <a href="#menu" class="btn btn-outline-light">View Menu</a>
-            <a href="#gallery" class="btn btn-outline-light">Gallery</a>
+            <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-gold btn-lg" data-i18n="rest_reserve">Reserve a Table</a>
+            <a href="#menu" class="btn btn-outline-light" data-i18n="rest_view_menu">View Menu</a>
+            <a href="#gallery" class="btn btn-outline-light" data-i18n="rest_gallery">Gallery</a>
         </div>
         <div class="hero-cover-meta">
             <span>📍 {{ r.address_line_1 }}</span>
@@ -39,7 +39,7 @@
 
     <a href="#welcome" class="hero-scroll-indicator" aria-label="Scroll down">
         <span class="hero-scroll-line"></span>
-        <span class="hero-scroll-text">SCROLL</span>
+        <span class="hero-scroll-text" data-i18n="hero_scroll">SCROLL</span>
     </a>
 </section>
 
@@ -47,32 +47,32 @@
     <div class="container">
         <div class="restaurant-intro">
             <div>
-                <h2 class="section-title text-left">Welcome</h2>
-                <p class="lead">{{ r.description }}</p>
-                <p><strong>Cuisine:</strong> {{ r.type }}</p>
+                <h2 class="section-title text-left" data-i18n="rest_welcome">Welcome</h2>
+                <p class="lead" data-i18n="r_{{ r.id|replace('-','_') }}_description">{{ r.description }}</p>
+                <p><strong data-i18n="rest_cuisine">Cuisine:</strong> <span data-i18n="r_{{ r.id|replace('-','_') }}_type">{{ r.type }}</span></p>
                 <div class="btn-row">
-                    <a href="#menu" class="btn btn-primary">Explore Menu</a>
-                    <a href="#gallery" class="btn btn-outline-dark">Gallery</a>
-                    <a href="{{ url_for('contact', slug=r.id) }}" class="btn btn-outline-dark">Contact</a>
+                    <a href="#menu" class="btn btn-primary" data-i18n="rest_explore_menu">Explore Menu</a>
+                    <a href="#gallery" class="btn btn-outline-dark" data-i18n="rest_gallery">Gallery</a>
+                    <a href="{{ url_for('contact', slug=r.id) }}" class="btn btn-outline-dark" data-i18n="rest_contact">Contact</a>
                 </div>
             </div>
             <aside class="info-card" style="--r-primary: {{ r.theme.primary }};">
-                <h3>Visit Us</h3>
+                <h3 data-i18n="rest_visit">Visit Us</h3>
                 <div class="info-block">
-                    <strong>📍 Address</strong>
+                    <strong>📍 <span data-i18n="rest_address">Address</span></strong>
                     <p>{{ r.address_line_1 }}<br>{{ r.address_line_2 }}</p>
                 </div>
                 <div class="info-block">
-                    <strong>📞 Phone</strong>
+                    <strong>📞 <span data-i18n="rest_phone">Phone</span></strong>
                     <p><a href="tel:{{ r.phone }}">{{ r.phone }}</a></p>
                 </div>
                 <div class="info-block">
-                    <strong>✉️ Email</strong>
+                    <strong>✉️ <span data-i18n="rest_email">Email</span></strong>
                     <p><a href="mailto:{{ r.email }}">{{ r.email }}</a></p>
                 </div>
                 {% if r.instagram_url %}
                 <div class="info-block">
-                    <strong>📸 Instagram</strong>
+                    <strong>📸 <span data-i18n="rest_instagram">Instagram</span></strong>
                     <p><a href="{{ r.instagram_url }}" target="_blank" rel="noopener">{{ r.instagram }}</a></p>
                 </div>
                 {% endif %}
@@ -83,12 +83,12 @@
 
 <section class="section section-beige">
     <div class="container">
-        <h2 class="section-title">Opening Hours</h2>
+        <h2 class="section-title" data-i18n="rest_hours_title">Opening Hours</h2>
         <div class="hours-grid">
             {% for day, time in r.hours %}
                 <div class="hours-row {% if time == 'CLOSED' %}closed{% endif %}">
-                    <span class="day">{{ day }}</span>
-                    <span class="time">{{ time }}</span>
+                    <span class="day" data-i18n="day_{{ day|lower }}">{{ day }}</span>
+                    <span class="time {% if time == 'CLOSED' %}closed-time{% endif %}" {% if time == 'CLOSED' %}data-i18n="day_closed"{% endif %}>{{ time }}</span>
                 </div>
             {% endfor %}
         </div>
@@ -97,8 +97,8 @@
 
 <section id="menu" class="section section-beige">
     <div class="container">
-        <h2 class="section-title">Our Menu</h2>
-        <p class="section-sub text-center">Explore the full selection at {{ r.short_name }}</p>
+        <h2 class="section-title" data-i18n="rest_menu_title">Our Menu</h2>
+        <p class="section-sub text-center"><span data-i18n="rest_menu_sub">Explore the full selection at</span> {{ r.short_name }}</p>
 
         <nav class="menu-nav">
             {% for category in r.menu.keys() %}
@@ -131,7 +131,7 @@
 {% if r.policies %}
 <section class="section">
     <div class="container">
-        <h2 class="section-title">Good to Know</h2>
+        <h2 class="section-title" data-i18n="rest_policies">Good to Know</h2>
         <ul class="policy-list">
             {% for p in r.policies %}
                 <li>{{ p }}</li>
@@ -144,8 +144,8 @@
 {% if r.gallery %}
 <section id="gallery" class="section">
     <div class="container">
-        <h2 class="section-title">Gallery</h2>
-        <p class="section-sub text-center">A glimpse of what awaits you at {{ r.short_name }}</p>
+        <h2 class="section-title" data-i18n="rest_gallery_title">Gallery</h2>
+        <p class="section-sub text-center"><span data-i18n="rest_gallery_sub">A glimpse of what awaits you at</span> {{ r.short_name }}</p>
         <div class="gallery-grid">
             {% for img, caption in r.gallery %}
                 <figure class="gallery-item">
@@ -160,9 +160,9 @@
 
 <section class="section section-dark">
     <div class="container text-center">
-        <h2 class="section-title light">Ready to Experience {{ r.short_name }}?</h2>
-        <p class="section-sub light">Book your table today — we look forward to welcoming you.</p>
-        <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-gold btn-lg">Reserve Now</a>
+        <h2 class="section-title light"><span data-i18n="rest_cta_title">Ready to Experience</span> {{ r.short_name }}?</h2>
+        <p class="section-sub light" data-i18n="rest_cta_sub">Book your table today — we look forward to welcoming you.</p>
+        <a href="{{ url_for('reservations', slug=r.id) }}" class="btn btn-gold btn-lg" data-i18n="rest_reserve_now">Reserve Now</a>
     </div>
 </section>
 

@@ -204,6 +204,40 @@ img { max-width: 100%; display: block; }
 }
 .btn-reserve:hover { background: var(--gold-light); color: var(--dark) !important; transform: translateY(-2px); }
 
+/* Language Switcher */
+.lang-switcher {
+    display: flex;
+    align-items: center;
+    margin-left: 0.75rem;
+}
+.lang-select {
+    background: rgba(255,255,255,0.12);
+    color: var(--cream);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: var(--radius);
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23F5E9D4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    padding-right: 1.5rem;
+    transition: var(--transition);
+}
+.lang-select:hover {
+    background-color: rgba(255,255,255,0.2);
+    border-color: var(--gold);
+}
+.lang-select option {
+    background: var(--dark);
+    color: var(--cream);
+}
+
 .mobile-toggle {
     display: none;
     background: none;
@@ -1504,6 +1538,8 @@ img { max-width: 100%; display: block; }
         box-shadow: none;
     }
     .mobile-toggle { display: block; }
+    .lang-switcher { margin-left: 0; margin-top: 0.5rem; }
+    .lang-select { font-size: 0.9rem; padding: 0.5rem 1.8rem 0.5rem 0.6rem; }
 
     .about-split,
     .restaurant-intro,

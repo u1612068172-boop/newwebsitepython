@@ -7,8 +7,8 @@
 <section class="page-hero" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
     <div class="container">
         <p class="page-eyebrow">{{ r.short_name }}</p>
-        <h1>Gallery</h1>
-        <p class="page-sub">A glimpse of our dining experience</p>
+        <h1 data-i18n="gallery_title">Gallery</h1>
+        <p class="page-sub" data-i18n="gallery_sub">A glimpse of our dining experience</p>
     </div>
 </section>
 
@@ -19,16 +19,16 @@
                 <div class="gallery-item" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
                     <div class="gallery-placeholder">
                         <span class="gallery-emoji">{{ r.hero_emoji }}</span>
-                        <span class="gallery-label">{{ r.short_name }} · Photo {{ i }}</span>
+                        <span class="gallery-label">{{ r.short_name }} · <span data-i18n="gallery_photo">Photo</span> {{ i }}</span>
                     </div>
                 </div>
             {% endfor %}
         </div>
 
         <div class="gallery-note">
-            <p><em>Photo gallery coming soon. Follow us on social media for the latest pictures of our dishes and atmosphere.</em></p>
+            <p><em data-i18n="gallery_coming_soon">Photo gallery coming soon. Follow us on social media for the latest pictures of our dishes and atmosphere.</em></p>
             {% if r.instagram_url %}
-                <a href="{{ r.instagram_url }}" target="_blank" rel="noopener" class="btn btn-outline-dark">Follow on Instagram</a>
+                <a href="{{ r.instagram_url }}" target="_blank" rel="noopener" class="btn btn-outline-dark" data-i18n="gallery_instagram">Follow on Instagram</a>
             {% endif %}
         </div>
     </div>

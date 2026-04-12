@@ -7,8 +7,8 @@
 <section class="page-hero" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
     <div class="container">
         <p class="page-eyebrow">{{ r.short_name }}</p>
-        <h1>Order Online</h1>
-        <p class="page-sub">{{ r.tagline }}</p>
+        <h1 data-i18n="order_title">Order Online</h1>
+        <p class="page-sub" data-i18n="r_{{ r.id|replace('-','_') }}_tagline">{{ r.tagline }}</p>
     </div>
 </section>
 
@@ -39,7 +39,8 @@
                                     <button type="button" class="btn-add-cart"
                                             data-name="{{ name }}"
                                             data-price="{{ price }}"
-                                            data-category="{{ category }}">
+                                            data-category="{{ category }}"
+                                            data-i18n="order_add">
                                         + Add
                                     </button>
                                 </div>
@@ -52,17 +53,17 @@
             <!-- Cart sidebar -->
             <aside class="order-cart-sidebar" id="cartSidebar">
                 <div class="cart-header">
-                    <h3>Your Order</h3>
+                    <h3 data-i18n="order_your_order">Your Order</h3>
                     <span class="cart-count" id="cartCount">0 items</span>
                 </div>
 
                 <div class="cart-items" id="cartItems">
-                    <p class="cart-empty" id="cartEmpty">Your cart is empty. Browse the menu and add items.</p>
+                    <p class="cart-empty" id="cartEmpty" data-i18n="order_cart_empty">Your cart is empty. Browse the menu and add items.</p>
                 </div>
 
                 <div class="cart-total" id="cartTotal" style="display:none;">
                     <div class="cart-total-row">
-                        <span>Total</span>
+                        <span data-i18n="order_total">Total</span>
                         <span id="cartTotalAmount">&euro;0.00</span>
                     </div>
                 </div>
@@ -70,51 +71,51 @@
                 <form method="POST" action="{{ url_for('order', slug=r.id) }}" class="cart-form" id="orderForm" style="display:none;">
                     <input type="hidden" name="cart_items" id="cartItemsInput" value="">
 
-                    <h4>Your Details</h4>
+                    <h4 data-i18n="order_your_details">Your Details</h4>
                     <div class="form-row">
-                        <label for="customer_name">Full Name <span class="required">*</span></label>
+                        <label for="customer_name"><span data-i18n="order_name">Full Name</span> <span class="required">*</span></label>
                         <input type="text" id="customer_name" name="customer_name" required value="{{ form.customer_name or '' }}">
                     </div>
                     <div class="form-row">
-                        <label for="email">Email <span class="required">*</span></label>
+                        <label for="email"><span data-i18n="order_email">Email</span> <span class="required">*</span></label>
                         <input type="email" id="email" name="email" required value="{{ form.email or '' }}">
                     </div>
                     <div class="form-row">
-                        <label for="phone">Phone</label>
+                        <label for="phone" data-i18n="order_phone">Phone</label>
                         <input type="tel" id="phone" name="phone" value="{{ form.phone or '' }}">
                     </div>
 
-                    <h4>Order Type <span class="required">*</span></h4>
+                    <h4><span data-i18n="order_type">Order Type</span> <span class="required">*</span></h4>
                     <div class="order-type-group">
                         <label class="order-type-option">
                             <input type="radio" name="order_type" value="takeaway" {% if form.order_type == 'takeaway' %}checked{% endif %}>
-                            <span class="order-type-label">Takeaway</span>
-                            <span class="order-type-desc">Pick up at the restaurant</span>
+                            <span class="order-type-label" data-i18n="order_takeaway">Takeaway</span>
+                            <span class="order-type-desc" data-i18n="order_takeaway_desc">Pick up at the restaurant</span>
                         </label>
                         <label class="order-type-option">
                             <input type="radio" name="order_type" value="delivery" {% if form.order_type == 'delivery' %}checked{% endif %}>
-                            <span class="order-type-label">Delivery</span>
-                            <span class="order-type-desc">Delivered to your address</span>
+                            <span class="order-type-label" data-i18n="order_delivery">Delivery</span>
+                            <span class="order-type-desc" data-i18n="order_delivery_desc">Delivered to your address</span>
                         </label>
                         <label class="order-type-option">
                             <input type="radio" name="order_type" value="dine-in" {% if form.order_type == 'dine-in' %}checked{% endif %}>
-                            <span class="order-type-label">Dine-in Pre-order</span>
-                            <span class="order-type-desc">Have it ready when you arrive</span>
+                            <span class="order-type-label" data-i18n="order_dinein">Dine-in Pre-order</span>
+                            <span class="order-type-desc" data-i18n="order_dinein_desc">Have it ready when you arrive</span>
                         </label>
                     </div>
 
                     <div class="form-row" id="deliveryAddressRow" style="display:none;">
-                        <label for="delivery_address">Delivery Address <span class="required">*</span></label>
-                        <textarea id="delivery_address" name="delivery_address" rows="2" placeholder="Street, city, postal code...">{{ form.delivery_address or '' }}</textarea>
+                        <label for="delivery_address"><span data-i18n="order_delivery_address">Delivery Address</span> <span class="required">*</span></label>
+                        <textarea id="delivery_address" name="delivery_address" rows="2" data-i18n="order_delivery_placeholder" data-i18n-placeholder="true" placeholder="Street, city, postal code...">{{ form.delivery_address or '' }}</textarea>
                     </div>
 
                     <div class="form-row">
-                        <label for="special_requests">Special Requests</label>
-                        <textarea id="special_requests" name="special_requests" rows="2" placeholder="Dietary restrictions, allergies...">{{ form.special_requests or '' }}</textarea>
+                        <label for="special_requests" data-i18n="order_special">Special Requests</label>
+                        <textarea id="special_requests" name="special_requests" rows="2" data-i18n="order_special_placeholder" data-i18n-placeholder="true" placeholder="Dietary restrictions, allergies...">{{ form.special_requests or '' }}</textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">Proceed to Payment</button>
-                    <p class="form-note">You'll be redirected to Stripe for secure payment.</p>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block" data-i18n="order_submit">Proceed to Payment</button>
+                    <p class="form-note" data-i18n="order_stripe_note">You'll be redirected to Stripe for secure payment.</p>
                 </form>
             </aside>
         </div>
