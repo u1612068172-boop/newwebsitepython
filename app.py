@@ -4,11 +4,16 @@ Manages two Portuguese restaurants in Setúbal:
 - Original's Casa de Peixe (seafood)
 - Lapicanha (premium grill)
 """
+import json
 import os
+import smtplib
 import sqlite3
 from datetime import datetime
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from pathlib import Path
 
+import stripe
 from flask import (
     Flask,
     abort,
@@ -24,6 +29,22 @@ from data import RESTAURANTS, all_restaurants, get_restaurant
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-change-me")
+
+# Stripe configuration
+stripe.api_key = os.environ.get("STRIPE_SECRET_KEY", "")
+STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
+
+# Email (SMTP) configuration
+SMTP_HOST = os.environ.get("SMTP_HOST", "smtp.gmail.com")
+SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
+SMTP_USER = os.environ.get("SMTP_USER", "")
+SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "")
+SMTP_FROM = os.environ.get("SMTP_FROM", "")
+
+# Twilio SMS configuration
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "")
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "")
+TWILIO_FROM_NUMBER = os.environ.get("TWILIO_FROM_NUMBER", "")
 
 # When DATABASE_URL (Neon/Postgres) is configured we persist reservations
 # there. Otherwise fall back to a local SQLite file for dev.
@@ -79,6 +100,25 @@ def init_db():
             guests INTEGER NOT NULL,
             special_requests TEXT,
             status TEXT DEFAULT 'pending',
+            created_at TEXT NOT NULL
+        )
+        """
+    )
+    cur.execute(
+        f"""
+        CREATE TABLE IF NOT EXISTS orders (
+            id {_ID_COL},
+            restaurant_id TEXT NOT NULL,
+            order_type TEXT NOT NULL,
+            customer_name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            phone TEXT,
+            delivery_address TEXT,
+            items TEXT NOT NULL,
+            total_amount REAL NOT NULL,
+            special_requests TEXT,
+            status TEXT DEFAULT 'pending',
+            stripe_session_id TEXT,
             created_at TEXT NOT NULL
         )
         """
@@ -217,6 +257,332 @@ def reservations(slug=None):
         selected=selected,
         form={},
     )
+
+
+# ---------------------------------------------------------------------------
+# Notification helpers (Email + SMS)
+# ---------------------------------------------------------------------------
+
+def send_order_email(order_data, restaurant):
+    """Send order notification email to the restaurant owner."""
+    if not SMTP_USER or not SMTP_PASSWORD:
+        return
+    try:
+        items = json.loads(order_data["items"])
+        items_html = "".join(
+            f"<tr><td>{it['name']}</td><td>{it['qty']}</td>"
+            f"<td>{it['price']}</td></tr>"
+            for it in items
+        )
+        body = f"""
+        <h2>New Order Received!</h2>
+        <p><strong>Restaurant:</strong> {restaurant['name']}</p>
+        <p><strong>Order Type:</strong> {order_data['order_type'].title()}</p>
+        <p><strong>Customer:</strong> {order_data['customer_name']}</p>
+        <p><strong>Email:</strong> {order_data['email']}</p>
+        <p><strong>Phone:</strong> {order_data.get('phone', 'N/A')}</p>
+        {"<p><strong>Delivery Address:</strong> " + order_data['delivery_address'] + "</p>" if order_data.get('delivery_address') else ""}
+        <h3>Items Ordered</h3>
+        <table border="1" cellpadding="6" cellspacing="0">
+            <tr><th>Item</th><th>Qty</th><th>Price</th></tr>
+            {items_html}
+        </table>
+        <p><strong>Total: &euro;{order_data['total_amount']:.2f}</strong></p>
+        {"<p><strong>Special Requests:</strong> " + order_data['special_requests'] + "</p>" if order_data.get('special_requests') else ""}
+        """
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"New Order - {restaurant['name']} - {order_data['order_type'].title()}"
+        msg["From"] = SMTP_FROM or SMTP_USER
+        msg["To"] = restaurant["email"]
+        msg.attach(MIMEText(body, "html"))
+
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.send_message(msg)
+    except Exception:
+        pass
+
+
+def send_order_sms(order_data, restaurant):
+    """Send order notification SMS to the restaurant owner."""
+    if not TWILIO_ACCOUNT_SID or not TWILIO_AUTH_TOKEN:
+        return
+    try:
+        from twilio.rest import Client
+        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        items = json.loads(order_data["items"])
+        items_text = ", ".join(f"{it['name']} x{it['qty']}" for it in items)
+        body = (
+            f"New {order_data['order_type']} order at {restaurant['name']}! "
+            f"Customer: {order_data['customer_name']}. "
+            f"Items: {items_text}. "
+            f"Total: EUR {order_data['total_amount']:.2f}"
+        )
+        client.messages.create(
+            body=body,
+            from_=TWILIO_FROM_NUMBER,
+            to=restaurant["phone"],
+        )
+    except Exception:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# Order routes
+# ---------------------------------------------------------------------------
+
+def _parse_price(price_str):
+    """Extract numeric euro value from a price string like '17.00€' or '14.90€ / 21.90€'."""
+    cleaned = price_str.split("/")[0].strip().replace("€", "").replace(",", ".")
+    # Handle per-KG prices — just use the number
+    cleaned = cleaned.replace("/KG", "").strip()
+    try:
+        return float(cleaned)
+    except ValueError:
+        return 0.0
+
+
+@app.route("/restaurant/<slug>/order", methods=["GET", "POST"])
+def order(slug):
+    r = get_restaurant(slug)
+    if not r:
+        abort(404)
+
+    if request.method == "POST":
+        customer_name = request.form.get("customer_name", "").strip()
+        email = request.form.get("email", "").strip()
+        phone = request.form.get("phone", "").strip()
+        order_type = request.form.get("order_type", "").strip()
+        delivery_address = request.form.get("delivery_address", "").strip()
+        special_requests = request.form.get("special_requests", "").strip()
+        cart_json = request.form.get("cart_items", "").strip()
+
+        errors = []
+        if not customer_name:
+            errors.append("Name is required.")
+        if not email or "@" not in email:
+            errors.append("A valid email is required.")
+        if order_type not in ("takeaway", "delivery", "dine-in"):
+            errors.append("Please select an order type.")
+        if order_type == "delivery" and not delivery_address:
+            errors.append("Delivery address is required for delivery orders.")
+
+        try:
+            cart_items = json.loads(cart_json) if cart_json else []
+        except json.JSONDecodeError:
+            cart_items = []
+            errors.append("Invalid cart data.")
+
+        if not cart_items:
+            errors.append("Your cart is empty. Please add items to order.")
+
+        # Calculate total from cart items
+        total = sum(
+            _parse_price(item.get("price", "0")) * int(item.get("qty", 1))
+            for item in cart_items
+        )
+
+        if errors:
+            for err in errors:
+                flash(err, "error")
+            return render_template(
+                "order.html",
+                r=r,
+                stripe_key=STRIPE_PUBLISHABLE_KEY,
+                form=request.form,
+            )
+
+        # Create Stripe Checkout session
+        line_items = []
+        for item in cart_items:
+            price_cents = int(_parse_price(item["price"]) * 100)
+            if price_cents <= 0:
+                continue
+            line_items.append({
+                "price_data": {
+                    "currency": "eur",
+                    "product_data": {"name": item["name"]},
+                    "unit_amount": price_cents,
+                },
+                "quantity": int(item.get("qty", 1)),
+            })
+
+        if not line_items:
+            flash("No valid items in cart.", "error")
+            return render_template(
+                "order.html",
+                r=r,
+                stripe_key=STRIPE_PUBLISHABLE_KEY,
+                form=request.form,
+            )
+
+        # Store order data in the session for retrieval after payment
+        order_data = {
+            "restaurant_id": r["id"],
+            "order_type": order_type,
+            "customer_name": customer_name,
+            "email": email,
+            "phone": phone,
+            "delivery_address": delivery_address,
+            "items": json.dumps(cart_items),
+            "total_amount": total,
+            "special_requests": special_requests,
+        }
+
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                line_items=line_items,
+                mode="payment",
+                success_url=request.host_url.rstrip("/") + url_for("order_success") + "?session_id={CHECKOUT_SESSION_ID}",
+                cancel_url=request.host_url.rstrip("/") + url_for("order_cancel", slug=r["id"]),
+                customer_email=email,
+                metadata={
+                    "restaurant_id": r["id"],
+                    "order_type": order_type,
+                    "customer_name": customer_name,
+                    "phone": phone,
+                    "delivery_address": delivery_address,
+                    "special_requests": special_requests,
+                    "items": json.dumps(cart_items),
+                },
+            )
+        except stripe.error.StripeError as e:
+            flash(f"Payment error: {str(e)}", "error")
+            return render_template(
+                "order.html",
+                r=r,
+                stripe_key=STRIPE_PUBLISHABLE_KEY,
+                form=request.form,
+            )
+
+        # Save the order with stripe session ID (status: awaiting_payment)
+        db = get_db()
+        cur = db.cursor()
+        placeholders = ", ".join([_PH] * 12)
+        cur.execute(
+            f"""INSERT INTO orders
+               (restaurant_id, order_type, customer_name, email, phone,
+                delivery_address, items, total_amount, special_requests,
+                status, stripe_session_id, created_at)
+               VALUES ({placeholders})""",
+            (
+                r["id"],
+                order_type,
+                customer_name,
+                email,
+                phone,
+                delivery_address,
+                json.dumps(cart_items),
+                total,
+                special_requests,
+                "awaiting_payment",
+                checkout_session.id,
+                datetime.utcnow().isoformat(),
+            ),
+        )
+        db.commit()
+        cur.close()
+
+        return redirect(checkout_session.url)
+
+    return render_template(
+        "order.html",
+        r=r,
+        stripe_key=STRIPE_PUBLISHABLE_KEY,
+        form={},
+    )
+
+
+@app.route("/order/success")
+def order_success():
+    session_id = request.args.get("session_id")
+    if not session_id:
+        return redirect(url_for("home"))
+
+    try:
+        checkout_session = stripe.checkout.Session.retrieve(session_id)
+    except Exception:
+        flash("Could not verify payment.", "error")
+        return redirect(url_for("home"))
+
+    if checkout_session.payment_status != "paid":
+        flash("Payment not completed.", "error")
+        return redirect(url_for("home"))
+
+    # Update order status in DB
+    db = get_db()
+    cur = db.cursor()
+    cur.execute(
+        f"UPDATE orders SET status = 'confirmed' WHERE stripe_session_id = {_PH}",
+        (session_id,),
+    )
+    db.commit()
+
+    # Fetch order data for confirmation page and notifications
+    cur.execute(
+        f"SELECT * FROM orders WHERE stripe_session_id = {_PH}",
+        (session_id,),
+    )
+    row = cur.fetchone()
+    cur.close()
+
+    if row:
+        if USE_POSTGRES:
+            order_data = {
+                "restaurant_id": row[1],
+                "order_type": row[2],
+                "customer_name": row[3],
+                "email": row[4],
+                "phone": row[5],
+                "delivery_address": row[6],
+                "items": row[7],
+                "total_amount": row[8],
+                "special_requests": row[9],
+            }
+            order_id = row[0]
+        else:
+            order_data = {
+                "restaurant_id": row["restaurant_id"],
+                "order_type": row["order_type"],
+                "customer_name": row["customer_name"],
+                "email": row["email"],
+                "phone": row["phone"],
+                "delivery_address": row["delivery_address"],
+                "items": row["items"],
+                "total_amount": row["total_amount"],
+                "special_requests": row["special_requests"],
+            }
+            order_id = row["id"]
+
+        restaurant = get_restaurant(order_data["restaurant_id"])
+
+        # Send notifications
+        if restaurant:
+            send_order_email(order_data, restaurant)
+            send_order_sms(order_data, restaurant)
+
+        items = json.loads(order_data["items"])
+        return render_template(
+            "order_success.html",
+            order_id=order_id,
+            order_data=order_data,
+            items=items,
+            restaurant=restaurant,
+        )
+
+    flash("Order not found.", "error")
+    return redirect(url_for("home"))
+
+
+@app.route("/order/cancel/<slug>")
+def order_cancel(slug):
+    r = get_restaurant(slug)
+    if not r:
+        abort(404)
+    flash("Payment was cancelled. Your order has not been placed.", "error")
+    return redirect(url_for("order", slug=slug))
 
 
 @app.route("/about")

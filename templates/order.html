@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Order Online — {{ r.name }}{% endblock %}
+
+{% block content %}
+
+<section class="page-hero" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
+    <div class="container">
+        <p class="page-eyebrow">{{ r.short_name }}</p>
+        <h1>Order Online</h1>
+        <p class="page-sub">{{ r.tagline }}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="order-layout">
+            <!-- Menu items -->
+            <div class="order-menu">
+                <nav class="menu-nav">
+                    {% for category in r.menu.keys() %}
+                        <a href="#order-{{ category|replace(' ', '-')|replace('(','')|replace(')','')|replace('/','-')|lower }}">{{ category }}</a>
+                    {% endfor %}
+                </nav>
+
+                {% for category, items in r.menu.items() %}
+                    <div class="order-category" id="order-{{ category|replace(' ', '-')|replace('(','')|replace(')','')|replace('/','-')|lower }}" style="--r-primary: {{ r.theme.primary }}; --r-accent: {{ r.theme.accent }};">
+                        <h2 class="menu-category-title">{{ category }}</h2>
+                        <div class="order-items-grid">
+                            {% for name, price, desc in items %}
+                                <div class="order-item-card">
+                                    <div class="order-item-info">
+                                        <span class="order-item-name">{{ name }}</span>
+                                        {% if desc %}
+                                            <span class="order-item-desc">{{ desc }}</span>
+                                        {% endif %}
+                                        <span class="order-item-price">{{ price }}</span>
+                                    </div>
+                                    <button type="button" class="btn-add-cart"
+                                            data-name="{{ name }}"
+                                            data-price="{{ price }}"
+                                            data-category="{{ category }}">
+                                        + Add
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Cart sidebar -->
+            <aside class="order-cart-sidebar" id="cartSidebar">
+                <div class="cart-header">
+                    <h3>Your Order</h3>
+                    <span class="cart-count" id="cartCount">0 items</span>
+                </div>
+
+                <div class="cart-items" id="cartItems">
+                    <p class="cart-empty" id="cartEmpty">Your cart is empty. Browse the menu and add items.</p>
+                </div>
+
+                <div class="cart-total" id="cartTotal" style="display:none;">
+                    <div class="cart-total-row">
+                        <span>Total</span>
+                        <span id="cartTotalAmount">&euro;0.00</span>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ url_for('order', slug=r.id) }}" class="cart-form" id="orderForm" style="display:none;">
+                    <input type="hidden" name="cart_items" id="cartItemsInput" value="">
+
+                    <h4>Your Details</h4>
+                    <div class="form-row">
+                        <label for="customer_name">Full Name <span class="required">*</span></label>
+                        <input type="text" id="customer_name" name="customer_name" required value="{{ form.customer_name or '' }}">
+                    </div>
+                    <div class="form-row">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required value="{{ form.email or '' }}">
+                    </div>
+                    <div class="form-row">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" value="{{ form.phone or '' }}">
+                    </div>
+
+                    <h4>Order Type <span class="required">*</span></h4>
+                    <div class="order-type-group">
+                        <label class="order-type-option">
+                            <input type="radio" name="order_type" value="takeaway" {% if form.order_type == 'takeaway' %}checked{% endif %}>
+                            <span class="order-type-label">Takeaway</span>
+                            <span class="order-type-desc">Pick up at the restaurant</span>
+                        </label>
+                        <label class="order-type-option">
+                            <input type="radio" name="order_type" value="delivery" {% if form.order_type == 'delivery' %}checked{% endif %}>
+                            <span class="order-type-label">Delivery</span>
+                            <span class="order-type-desc">Delivered to your address</span>
+                        </label>
+                        <label class="order-type-option">
+                            <input type="radio" name="order_type" value="dine-in" {% if form.order_type == 'dine-in' %}checked{% endif %}>
+                            <span class="order-type-label">Dine-in Pre-order</span>
+                            <span class="order-type-desc">Have it ready when you arrive</span>
+                        </label>
+                    </div>
+
+                    <div class="form-row" id="deliveryAddressRow" style="display:none;">
+                        <label for="delivery_address">Delivery Address <span class="required">*</span></label>
+                        <textarea id="delivery_address" name="delivery_address" rows="2" placeholder="Street, city, postal code...">{{ form.delivery_address or '' }}</textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="special_requests">Special Requests</label>
+                        <textarea id="special_requests" name="special_requests" rows="2" placeholder="Dietary restrictions, allergies...">{{ form.special_requests or '' }}</textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Proceed to Payment</button>
+                    <p class="form-note">You'll be redirected to Stripe for secure payment.</p>
+                </form>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<!-- Mobile cart toggle -->
+<button class="mobile-cart-toggle" id="mobileCartToggle" style="display:none;">
+    <span class="mobile-cart-icon">&#128722;</span>
+    <span class="mobile-cart-badge" id="mobileCartBadge">0</span>
+    <span class="mobile-cart-total" id="mobileCartTotal">&euro;0.00</span>
+</button>
+
+{% endblock %}
