@@ -728,7 +728,7 @@ const TRANSLATIONS = {
 // ---------------------------------------------------------------
 
 function getLang() {
-  return localStorage.getItem('site_lang') || 'en';
+  return localStorage.getItem('site_lang') || 'pt';
 }
 
 function setLang(lang) {
@@ -802,8 +802,6 @@ document.addEventListener('DOMContentLoaded', function () {
       setLang(this.value);
     });
   }
-  // Apply if not English (English is the default in HTML)
-  if (lang !== 'en') {
-    applyTranslations(lang);
-  }
+  // Always apply so the default (Portuguese) overrides the English HTML
+  applyTranslations(lang);
 });
