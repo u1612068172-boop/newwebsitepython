@@ -5,8 +5,8 @@ Source: websiteinformtion.txt
 RESTAURANTS = {
     "casa-da-peixe": {
         "id": "casa-da-peixe",
-        "name": "Original's Casa de Peixe",
-        "short_name": "Casa de Peixe",
+        "name": "Picanha para Familia",
+        "short_name": "Picanha para Familia",
         "tagline": "Fresh seafood and Portuguese coastal flavors",
         "type": "Seafood / Portuguese Coastal Cuisine",
         "description": (

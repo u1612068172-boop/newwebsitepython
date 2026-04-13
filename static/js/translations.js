@@ -1,5 +1,5 @@
 /**
- * Multi-language support for Casa de Peixe & Lapicanha website.
+ * Multi-language support for Picanha para Familia & Lapicanha website.
  * Languages: English (default), Portuguese, Spanish, French.
  */
 
@@ -37,7 +37,7 @@ const TRANSLATIONS = {
     about_title: "About Us",
     about_lead: "Two restaurants. One passion. Authentic Portugal.",
     about_p1: "Located on the historic Rua & Largo Jos\u00e9 Afonso in Set\u00fabal, our two restaurants sit as neighbours \u2014 each a celebration of a different facet of Portuguese cuisine.",
-    about_p2_casa: "Original's Casa de Peixe brings you the freshest catch from the Atlantic \u2014 sea bream, cod, octopus, prawns \u2014 cooked with recipes passed down through generations of coastal cooks.",
+    about_p2_casa: "Picanha para Familia brings you the freshest catch from the Atlantic \u2014 sea bream, cod, octopus, prawns \u2014 cooked with recipes passed down through generations of coastal cooks.",
     about_p2_lapicanha: "Lapicanha is our premium grill house. We specialize in perfectly prepared picanha and other prime cuts, paired with authentic Portuguese sides, wines, and a warm, rustic atmosphere.",
     about_book: "Book Your Table",
     about_menu_items: "Menu Items",
@@ -45,7 +45,7 @@ const TRANSLATIONS = {
 
     // Visit section - index
     visit_title: "Visit Us in Set\u00fabal",
-    visit_sub: "Both restaurants are located on Rua/Largo Jos\u00e9 Afonso \u2014 come for lunch at Casa de Peixe, return for dinner at Lapicanha.",
+    visit_sub: "Both restaurants are located on Rua/Largo Jos\u00e9 Afonso \u2014 come for lunch at Picanha para Familia, return for dinner at Lapicanha.",
     visit_reserve: "Make a Reservation",
 
     // Restaurant page
@@ -172,7 +172,7 @@ const TRANSLATIONS = {
     footer_desc: "Two authentic Portuguese dining experiences in Set\u00fabal. From fresh coastal seafood to premium grilled picanha.",
     footer_links: "Quick Links",
     footer_reservations: "Reservations",
-    footer_copyright: "Original's Casa de Peixe & Lapicanha \u00b7 Set\u00fabal, Portugal. All rights reserved.",
+    footer_copyright: "Picanha para Familia & Lapicanha \u00b7 Set\u00fabal, Portugal. All rights reserved.",
 
     // Days
     day_monday: "Monday",
@@ -226,14 +226,14 @@ const TRANSLATIONS = {
     about_title: "Sobre N\u00f3s",
     about_lead: "Dois restaurantes. Uma paix\u00e3o. Portugal aut\u00eantico.",
     about_p1: "Situados na hist\u00f3rica Rua & Largo Jos\u00e9 Afonso em Set\u00fabal, os nossos dois restaurantes s\u00e3o vizinhos \u2014 cada um celebra uma faceta diferente da cozinha portuguesa.",
-    about_p2_casa: "O Original's Casa de Peixe traz-lhe o mais fresco do Atl\u00e2ntico \u2014 dourada, bacalhau, polvo, cama\u00e3o \u2014 cozinhados com receitas transmitidas por gera\u00e7\u00f5es de cozinheiros costeiros.",
+    about_p2_casa: "O Picanha para Familia traz-lhe o mais fresco do Atl\u00e2ntico \u2014 dourada, bacalhau, polvo, cama\u00e3o \u2014 cozinhados com receitas transmitidas por gera\u00e7\u00f5es de cozinheiros costeiros.",
     about_p2_lapicanha: "O Lapicanha \u00e9 a nossa casa de grelhados premium. Especializamo-nos em picanha perfeitamente preparada e outros cortes nobres, acompanhados de guarnições portuguesas, vinhos e um ambiente r\u00fastico e acolhedor.",
     about_book: "Reserve a Sua Mesa",
     about_menu_items: "Pratos",
     about_passion: "Paix\u00e3o",
 
     visit_title: "Visite-nos em Set\u00fabal",
-    visit_sub: "Ambos os restaurantes est\u00e3o localizados na Rua/Largo Jos\u00e9 Afonso \u2014 venha almo\u00e7ar no Casa de Peixe e volte para jantar no Lapicanha.",
+    visit_sub: "Ambos os restaurantes est\u00e3o localizados na Rua/Largo Jos\u00e9 Afonso \u2014 venha almo\u00e7ar no Picanha para Familia e volte para jantar no Lapicanha.",
     visit_reserve: "Fazer Reserva",
 
     rest_reserve: "Reservar Mesa",
@@ -350,7 +350,7 @@ const TRANSLATIONS = {
     footer_desc: "Duas experi\u00eancias gastron\u00f3micas portuguesas aut\u00eanticas em Set\u00fabal. Do marisco fresco da costa \u00e0 picanha grelhada premium.",
     footer_links: "Links R\u00e1pidos",
     footer_reservations: "Reservas",
-    footer_copyright: "Original's Casa de Peixe & Lapicanha \u00b7 Set\u00fabal, Portugal. Todos os direitos reservados.",
+    footer_copyright: "Picanha para Familia & Lapicanha \u00b7 Set\u00fabal, Portugal. Todos os direitos reservados.",
 
     day_monday: "Segunda-feira",
     day_tuesday: "Ter\u00e7a-feira",
@@ -401,14 +401,14 @@ const TRANSLATIONS = {
     about_title: "Sobre Nosotros",
     about_lead: "Dos restaurantes. Una pasi\u00f3n. Portugal aut\u00e9ntico.",
     about_p1: "Ubicados en la hist\u00f3rica Rua & Largo Jos\u00e9 Afonso en Set\u00fabal, nuestros dos restaurantes son vecinos \u2014 cada uno celebra una faceta diferente de la cocina portuguesa.",
-    about_p2_casa: "Original's Casa de Peixe le trae lo m\u00e1s fresco del Atl\u00e1ntico \u2014 dorada, bacalao, pulpo, gambas \u2014 cocinado con recetas transmitidas por generaciones de cocineros costeros.",
+    about_p2_casa: "Picanha para Familia le trae lo m\u00e1s fresco del Atl\u00e1ntico \u2014 dorada, bacalao, pulpo, gambas \u2014 cocinado con recetas transmitidas por generaciones de cocineros costeros.",
     about_p2_lapicanha: "Lapicanha es nuestra casa de parrilla premium. Nos especializamos en picanha perfectamente preparada y otros cortes selectos, acompa\u00f1ados de guarniciones portuguesas, vinos y un ambiente r\u00fastico y acogedor.",
     about_book: "Reserve Su Mesa",
     about_menu_items: "Platos",
     about_passion: "Pasi\u00f3n",
 
     visit_title: "Vis\u00edtenos en Set\u00fabal",
-    visit_sub: "Ambos restaurantes est\u00e1n ubicados en Rua/Largo Jos\u00e9 Afonso \u2014 venga a almorzar al Casa de Peixe y vuelva a cenar al Lapicanha.",
+    visit_sub: "Ambos restaurantes est\u00e1n ubicados en Rua/Largo Jos\u00e9 Afonso \u2014 venga a almorzar al Picanha para Familia y vuelva a cenar al Lapicanha.",
     visit_reserve: "Hacer Reserva",
 
     rest_reserve: "Reservar Mesa",
@@ -525,7 +525,7 @@ const TRANSLATIONS = {
     footer_desc: "Dos experiencias gastron\u00f3micas portuguesas aut\u00e9nticas en Set\u00fabal. Del marisco fresco de la costa a la picanha a la parrilla premium.",
     footer_links: "Enlaces R\u00e1pidos",
     footer_reservations: "Reservas",
-    footer_copyright: "Original's Casa de Peixe & Lapicanha \u00b7 Set\u00fabal, Portugal. Todos los derechos reservados.",
+    footer_copyright: "Picanha para Familia & Lapicanha \u00b7 Set\u00fabal, Portugal. Todos los derechos reservados.",
 
     day_monday: "Lunes",
     day_tuesday: "Martes",
@@ -576,14 +576,14 @@ const TRANSLATIONS = {
     about_title: "\u00c0 Propos",
     about_lead: "Deux restaurants. Une passion. Le Portugal authentique.",
     about_p1: "Situ\u00e9s sur la historique Rua & Largo Jos\u00e9 Afonso \u00e0 Set\u00fabal, nos deux restaurants sont voisins \u2014 chacun c\u00e9l\u00e8bre une facette diff\u00e9rente de la cuisine portugaise.",
-    about_p2_casa: "Original's Casa de Peixe vous apporte le plus frais de l'Atlantique \u2014 dorade, morue, poulpe, crevettes \u2014 cuisin\u00e9s avec des recettes transmises par des g\u00e9n\u00e9rations de cuisiniers c\u00f4tiers.",
+    about_p2_casa: "Picanha para Familia vous apporte le plus frais de l'Atlantique \u2014 dorade, morue, poulpe, crevettes \u2014 cuisin\u00e9s avec des recettes transmises par des g\u00e9n\u00e9rations de cuisiniers c\u00f4tiers.",
     about_p2_lapicanha: "Lapicanha est notre maison de grillade premium. Nous nous sp\u00e9cialisons dans la picanha parfaitement pr\u00e9par\u00e9e et d'autres coupes nobles, accompagn\u00e9es de garnitures portugaises, vins et une atmosph\u00e8re rustique et chaleureuse.",
     about_book: "R\u00e9servez Votre Table",
     about_menu_items: "Plats",
     about_passion: "Passion",
 
     visit_title: "Visitez-nous \u00e0 Set\u00fabal",
-    visit_sub: "Les deux restaurants sont situ\u00e9s sur Rua/Largo Jos\u00e9 Afonso \u2014 venez d\u00e9jeuner au Casa de Peixe, revenez d\u00eener au Lapicanha.",
+    visit_sub: "Les deux restaurants sont situ\u00e9s sur Rua/Largo Jos\u00e9 Afonso \u2014 venez d\u00e9jeuner au Picanha para Familia, revenez d\u00eener au Lapicanha.",
     visit_reserve: "Faire une R\u00e9servation",
 
     rest_reserve: "R\u00e9server une Table",
@@ -700,7 +700,7 @@ const TRANSLATIONS = {
     footer_desc: "Deux exp\u00e9riences culinaires portugaises authentiques \u00e0 Set\u00fabal. Des fruits de mer frais de la c\u00f4te au picanha grill\u00e9 premium.",
     footer_links: "Liens Rapides",
     footer_reservations: "R\u00e9servations",
-    footer_copyright: "Original's Casa de Peixe & Lapicanha \u00b7 Set\u00fabal, Portugal. Tous droits r\u00e9serv\u00e9s.",
+    footer_copyright: "Picanha para Familia & Lapicanha \u00b7 Set\u00fabal, Portugal. Tous droits r\u00e9serv\u00e9s.",
 
     day_monday: "Lundi",
     day_tuesday: "Mardi",
@@ -775,7 +775,7 @@ function applyTranslations(lang) {
     el.textContent = val;
   });
 
-  // Update elements with data-i18n-append (text + dynamic suffix, e.g. "Discover Casa de Peixe")
+  // Update elements with data-i18n-append (text + dynamic suffix, e.g. "Discover Picanha para Familia")
   document.querySelectorAll('[data-i18n-prefix]').forEach(function (el) {
     const key = el.getAttribute('data-i18n-prefix');
     const suffix = el.getAttribute('data-i18n-suffix') || '';

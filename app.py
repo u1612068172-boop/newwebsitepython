@@ -1,7 +1,7 @@
-"""Original's Casa de Peixe & Lapicanha - Flask website.
+"""Picanha para Familia & Lapicanha - Flask website.
 
 Manages two Portuguese restaurants in Setúbal:
-- Original's Casa de Peixe (seafood)
+- Picanha para Familia (seafood)
 - Lapicanha (premium grill)
 """
 import json
