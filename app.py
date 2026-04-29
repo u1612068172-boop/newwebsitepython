@@ -293,7 +293,91 @@ def send_order_email(order_data, restaurant):
         msg = MIMEMultipart("alternative")
         msg["Subject"] = f"New Order - {restaurant['name']} - {order_data['order_type'].title()}"
         msg["From"] = SMTP_FROM or SMTP_USER
-        msg["To"] = restaurant["email"]
+        msg["To"] = restaurant.get("orders_email") or restaurant["email"]
+        msg.attach(MIMEText(body, "html"))
+
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.send_message(msg)
+    except Exception:
+        pass
+
+
+def send_customer_receipt(order_data, restaurant, order_id):
+    """Send order receipt email to the customer."""
+    if not SMTP_USER or not SMTP_PASSWORD:
+        return
+    try:
+        items = json.loads(order_data["items"])
+        items_html = "".join(
+            f"<tr><td style='padding:6px;border-bottom:1px solid #eee;'>{it['name']}</td>"
+            f"<td style='padding:6px;border-bottom:1px solid #eee;text-align:center;'>{it['qty']}</td>"
+            f"<td style='padding:6px;border-bottom:1px solid #eee;text-align:right;'>{it['price']}</td></tr>"
+            for it in items
+        )
+        order_type_label = order_data["order_type"].replace("-", " ").title()
+        delivery_block = ""
+        if order_data.get("delivery_address"):
+            delivery_block = (
+                f"<p><strong>Delivery Address:</strong> "
+                f"{order_data['delivery_address']}</p>"
+            )
+        special_block = ""
+        if order_data.get("special_requests"):
+            special_block = (
+                f"<p><strong>Special Requests:</strong> "
+                f"{order_data['special_requests']}</p>"
+            )
+        body = f"""
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+            <div style="background:#722F37;color:#F5E9D4;padding:24px;text-align:center;border-radius:8px 8px 0 0;">
+                <h1 style="margin:0;font-size:28px;">Order Confirmed!</h1>
+                <p style="margin:8px 0 0;opacity:0.9;">Thank you for ordering from {restaurant['name']}</p>
+            </div>
+            <div style="background:#fff;border:1px solid #ddd;border-top:none;padding:24px;border-radius:0 0 8px 8px;">
+                <p>Hi {order_data['customer_name']},</p>
+                <p>We've received your order and your payment has been confirmed.
+                The restaurant has been notified and will begin preparing your order shortly.</p>
+
+                <div style="background:#F5E9D4;padding:16px;border-radius:6px;margin:20px 0;">
+                    <p style="margin:4px 0;"><strong>Order #:</strong> {order_id}</p>
+                    <p style="margin:4px 0;"><strong>Order Type:</strong> {order_type_label}</p>
+                    <p style="margin:4px 0;"><strong>Restaurant:</strong> {restaurant['name']}</p>
+                    {delivery_block}
+                </div>
+
+                <h3 style="color:#722F37;border-bottom:2px solid #C9A961;padding-bottom:8px;">Items Ordered</h3>
+                <table style="width:100%;border-collapse:collapse;">
+                    <tr style="background:#F5E9D4;">
+                        <th style="padding:8px;text-align:left;">Item</th>
+                        <th style="padding:8px;text-align:center;">Qty</th>
+                        <th style="padding:8px;text-align:right;">Price</th>
+                    </tr>
+                    {items_html}
+                </table>
+                <p style="text-align:right;font-size:18px;font-weight:bold;margin:16px 0;color:#722F37;">
+                    Total Paid: &euro;{order_data['total_amount']:.2f}
+                </p>
+                {special_block}
+
+                <hr style="border:none;border-top:1px solid #ddd;margin:24px 0;">
+
+                <h3 style="color:#722F37;">Restaurant Contact</h3>
+                <p style="margin:4px 0;"><strong>Phone:</strong> {restaurant['phone']}</p>
+                <p style="margin:4px 0;"><strong>Email:</strong> {restaurant['email']}</p>
+                <p style="margin:4px 0;"><strong>Address:</strong> {restaurant['address_line_1']}, {restaurant['address_line_2']}</p>
+
+                <p style="margin-top:24px;color:#666;font-size:13px;">
+                    If you have any questions about your order, please contact the restaurant directly.
+                </p>
+            </div>
+        </div>
+        """
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"Your order #{order_id} from {restaurant['name']}"
+        msg["From"] = SMTP_FROM or SMTP_USER
+        msg["To"] = order_data["email"]
         msg.attach(MIMEText(body, "html"))
 
         with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
@@ -562,6 +646,7 @@ def order_success():
         if restaurant:
             send_order_email(order_data, restaurant)
             send_order_sms(order_data, restaurant)
+            send_customer_receipt(order_data, restaurant, order_id)
 
         items = json.loads(order_data["items"])
         return render_template(

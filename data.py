@@ -20,6 +20,7 @@ RESTAURANTS = {
         "phone": "+351 926 091 468",
         "whatsapp": "+351 926 091 468",
         "email": "info@casadapeixe.pt",
+        "orders_email": "lapicanha.setubal@gmail.com",
         "instagram": "@casadepeixe3",
         "instagram_url": "https://www.instagram.com/casadepeixe3/",
         "hours": [
@@ -305,6 +306,7 @@ RESTAURANTS = {
         "phone": "+351 915 214 437",
         "whatsapp": "+351 915 214 437",
         "email": "reservas@lapicanha.pt",
+        "orders_email": "lapicanha.setubal@gmail.com",
         "instagram": "",
         "instagram_url": "",
         "hours": [
