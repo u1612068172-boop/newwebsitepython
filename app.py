@@ -46,7 +46,7 @@ SMTP_FROM = os.environ.get("SMTP_FROM", "")
 
 # When DATABASE_URL (Neon/Postgres) is configured we persist reservations
 # there. Otherwise fall back to a local SQLite file for dev.
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = os.environ.get("Amanbhaiaya_DATABASE_URL") or os.environ.get("DATABASE_URL")
 USE_POSTGRES = bool(DATABASE_URL)
 DB_PATH = Path(__file__).parent / "reservations.db"
 
