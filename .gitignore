@@ -1,0 +1,28 @@
+# Secrets — NEVER commit these
+.env
+.env.local
+.env.*.local
+
+# Local SQLite database
+reservations.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel

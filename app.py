@@ -14,6 +14,7 @@ from email.mime.text import MIMEText
 from pathlib import Path
 
 import stripe
+from dotenv import load_dotenv
 from flask import (
     Flask,
     abort,
@@ -24,6 +25,8 @@ from flask import (
     request,
     url_for,
 )
+
+load_dotenv()
 
 from data import RESTAURANTS, all_restaurants, get_restaurant
 
@@ -40,11 +43,6 @@ SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
 SMTP_USER = os.environ.get("SMTP_USER", "")
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "")
 SMTP_FROM = os.environ.get("SMTP_FROM", "")
-
-# Twilio SMS configuration
-TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "")
-TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "")
-TWILIO_FROM_NUMBER = os.environ.get("TWILIO_FROM_NUMBER", "")
 
 # When DATABASE_URL (Neon/Postgres) is configured we persist reservations
 # there. Otherwise fall back to a local SQLite file for dev.
@@ -222,7 +220,7 @@ def reservations(slug=None):
 
         db = get_db()
         cur = db.cursor()
-        placeholders = ", ".join([_PH] * 9)
+        placeholders = ", ".join([_PH] * 10)
         cur.execute(
             f"""INSERT INTO reservations
                (restaurant_id, name, email, phone, date, time, guests,
@@ -243,6 +241,19 @@ def reservations(slug=None):
         )
         db.commit()
         cur.close()
+
+        reservation_data = {
+            "name": name,
+            "email": email,
+            "phone": phone,
+            "date": date,
+            "time": time,
+            "guests": guests_int,
+            "special_requests": special,
+        }
+        send_reservation_email(reservation_data, RESTAURANTS[restaurant_id])
+        send_reservation_confirmation(reservation_data, RESTAURANTS[restaurant_id])
+
         flash(
             f"Thank you, {name}! Your reservation at "
             f"{RESTAURANTS[restaurant_id]['name']} has been received. "
@@ -388,26 +399,95 @@ def send_customer_receipt(order_data, restaurant, order_id):
         pass
 
 
-def send_order_sms(order_data, restaurant):
-    """Send order notification SMS to the restaurant owner."""
-    if not TWILIO_ACCOUNT_SID or not TWILIO_AUTH_TOKEN:
+def send_reservation_email(reservation_data, restaurant):
+    """Send reservation notification email to the restaurant owner."""
+    if not SMTP_USER or not SMTP_PASSWORD:
         return
     try:
-        from twilio.rest import Client
-        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-        items = json.loads(order_data["items"])
-        items_text = ", ".join(f"{it['name']} x{it['qty']}" for it in items)
-        body = (
-            f"New {order_data['order_type']} order at {restaurant['name']}! "
-            f"Customer: {order_data['customer_name']}. "
-            f"Items: {items_text}. "
-            f"Total: EUR {order_data['total_amount']:.2f}"
-        )
-        client.messages.create(
-            body=body,
-            from_=TWILIO_FROM_NUMBER,
-            to=restaurant["phone"],
-        )
+        special_block = ""
+        if reservation_data.get("special_requests"):
+            special_block = (
+                f"<p><strong>Special Requests:</strong> "
+                f"{reservation_data['special_requests']}</p>"
+            )
+        body = f"""
+        <h2>New Reservation Request!</h2>
+        <p><strong>Restaurant:</strong> {restaurant['name']}</p>
+        <p><strong>Customer:</strong> {reservation_data['name']}</p>
+        <p><strong>Email:</strong> {reservation_data['email']}</p>
+        <p><strong>Phone:</strong> {reservation_data.get('phone') or 'N/A'}</p>
+        <p><strong>Date:</strong> {reservation_data['date']}</p>
+        <p><strong>Time:</strong> {reservation_data['time']}</p>
+        <p><strong>Guests:</strong> {reservation_data['guests']}</p>
+        {special_block}
+        """
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"New Reservation - {restaurant['name']} - {reservation_data['date']} {reservation_data['time']}"
+        msg["From"] = SMTP_FROM or SMTP_USER
+        msg["To"] = restaurant.get("orders_email") or restaurant["email"]
+        msg.attach(MIMEText(body, "html"))
+
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.send_message(msg)
+    except Exception:
+        pass
+
+
+def send_reservation_confirmation(reservation_data, restaurant):
+    """Send reservation confirmation email to the customer."""
+    if not SMTP_USER or not SMTP_PASSWORD:
+        return
+    try:
+        special_block = ""
+        if reservation_data.get("special_requests"):
+            special_block = (
+                f"<p><strong>Special Requests:</strong> "
+                f"{reservation_data['special_requests']}</p>"
+            )
+        body = f"""
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+            <div style="background:#722F37;color:#F5E9D4;padding:24px;text-align:center;border-radius:8px 8px 0 0;">
+                <h1 style="margin:0;font-size:28px;">Reservation Received</h1>
+                <p style="margin:8px 0 0;opacity:0.9;">{restaurant['name']}</p>
+            </div>
+            <div style="background:#fff;border:1px solid #ddd;border-top:none;padding:24px;border-radius:0 0 8px 8px;">
+                <p>Hi {reservation_data['name']},</p>
+                <p>Thank you for your reservation request. We've received the
+                following details and will confirm your booking by email shortly.</p>
+
+                <div style="background:#F5E9D4;padding:16px;border-radius:6px;margin:20px 0;">
+                    <p style="margin:4px 0;"><strong>Restaurant:</strong> {restaurant['name']}</p>
+                    <p style="margin:4px 0;"><strong>Date:</strong> {reservation_data['date']}</p>
+                    <p style="margin:4px 0;"><strong>Time:</strong> {reservation_data['time']}</p>
+                    <p style="margin:4px 0;"><strong>Guests:</strong> {reservation_data['guests']}</p>
+                </div>
+                {special_block}
+
+                <hr style="border:none;border-top:1px solid #ddd;margin:24px 0;">
+
+                <h3 style="color:#722F37;">Restaurant Contact</h3>
+                <p style="margin:4px 0;"><strong>Phone:</strong> {restaurant['phone']}</p>
+                <p style="margin:4px 0;"><strong>Email:</strong> {restaurant['email']}</p>
+                <p style="margin:4px 0;"><strong>Address:</strong> {restaurant['address_line_1']}, {restaurant['address_line_2']}</p>
+
+                <p style="margin-top:24px;color:#666;font-size:13px;">
+                    If you need to change or cancel your reservation, please contact the restaurant directly.
+                </p>
+            </div>
+        </div>
+        """
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"Reservation request received at {restaurant['name']}"
+        msg["From"] = SMTP_FROM or SMTP_USER
+        msg["To"] = reservation_data["email"]
+        msg.attach(MIMEText(body, "html"))
+
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.send_message(msg)
     except Exception:
         pass
 
@@ -645,7 +725,6 @@ def order_success():
         # Send notifications
         if restaurant:
             send_order_email(order_data, restaurant)
-            send_order_sms(order_data, restaurant)
             send_customer_receipt(order_data, restaurant, order_id)
 
         items = json.loads(order_data["items"])
