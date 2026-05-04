@@ -675,16 +675,44 @@ def order_success():
         flash("Payment not completed.", "error")
         return redirect(url_for("home"))
 
-    # Update order status in DB
+    # Idempotent: confirms the order in DB and sends notification emails
+    # exactly once, whether triggered here or by the Stripe webhook.
+    order_id, order_data, restaurant = _confirm_order_and_notify(session_id)
+
+    if not order_data:
+        flash("Order not found.", "error")
+        return redirect(url_for("home"))
+
+    items = json.loads(order_data["items"])
+    return render_template(
+        "order_success.html",
+        order_id=order_id,
+        order_data=order_data,
+        items=items,
+        restaurant=restaurant,
+    )
+
+
+def _confirm_order_and_notify(session_id):
+    """Mark a paid order as confirmed and send notifications.
+
+    Idempotent: the UPDATE only touches rows that aren't already confirmed,
+    so emails are sent at most once even if both the success-page redirect
+    and the Stripe webhook fire for the same session.
+
+    Returns (order_id, order_data, restaurant) — order_data is None if no
+    matching row exists.
+    """
     db = get_db()
     cur = db.cursor()
     cur.execute(
-        f"UPDATE orders SET status = 'confirmed' WHERE stripe_session_id = {_PH}",
+        f"UPDATE orders SET status = 'confirmed' "
+        f"WHERE stripe_session_id = {_PH} AND status != 'confirmed'",
         (session_id,),
     )
+    rows_updated = cur.rowcount
     db.commit()
 
-    # Fetch order data for confirmation page and notifications
     cur.execute(
         f"SELECT * FROM orders WHERE stripe_session_id = {_PH}",
         (session_id,),
@@ -692,52 +720,69 @@ def order_success():
     row = cur.fetchone()
     cur.close()
 
-    if row:
-        if USE_POSTGRES:
-            order_data = {
-                "restaurant_id": row[1],
-                "order_type": row[2],
-                "customer_name": row[3],
-                "email": row[4],
-                "phone": row[5],
-                "delivery_address": row[6],
-                "items": row[7],
-                "total_amount": row[8],
-                "special_requests": row[9],
-            }
-            order_id = row[0]
-        else:
-            order_data = {
-                "restaurant_id": row["restaurant_id"],
-                "order_type": row["order_type"],
-                "customer_name": row["customer_name"],
-                "email": row["email"],
-                "phone": row["phone"],
-                "delivery_address": row["delivery_address"],
-                "items": row["items"],
-                "total_amount": row["total_amount"],
-                "special_requests": row["special_requests"],
-            }
-            order_id = row["id"]
+    if not row:
+        return None, None, None
 
-        restaurant = get_restaurant(order_data["restaurant_id"])
+    if USE_POSTGRES:
+        order_data = {
+            "restaurant_id": row[1],
+            "order_type": row[2],
+            "customer_name": row[3],
+            "email": row[4],
+            "phone": row[5],
+            "delivery_address": row[6],
+            "items": row[7],
+            "total_amount": row[8],
+            "special_requests": row[9],
+        }
+        order_id = row[0]
+    else:
+        order_data = {
+            "restaurant_id": row["restaurant_id"],
+            "order_type": row["order_type"],
+            "customer_name": row["customer_name"],
+            "email": row["email"],
+            "phone": row["phone"],
+            "delivery_address": row["delivery_address"],
+            "items": row["items"],
+            "total_amount": row["total_amount"],
+            "special_requests": row["special_requests"],
+        }
+        order_id = row["id"]
 
-        # Send notifications
-        if restaurant:
-            send_order_email(order_data, restaurant)
-            send_customer_receipt(order_data, restaurant, order_id)
+    restaurant = get_restaurant(order_data["restaurant_id"])
 
-        items = json.loads(order_data["items"])
-        return render_template(
-            "order_success.html",
-            order_id=order_id,
-            order_data=order_data,
-            items=items,
-            restaurant=restaurant,
+    if rows_updated > 0 and restaurant:
+        send_order_email(order_data, restaurant)
+        send_customer_receipt(order_data, restaurant, order_id)
+
+    return order_id, order_data, restaurant
+
+
+@app.route("/stripe/webhook", methods=["POST"])
+def stripe_webhook():
+    """Server-to-server confirmation from Stripe — fires regardless of whether
+    the customer's browser successfully redirects back to /order/success.
+    """
+    webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+    if not webhook_secret:
+        return "Webhook not configured", 503
+
+    payload = request.data
+    sig_header = request.headers.get("Stripe-Signature", "")
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, webhook_secret
         )
+    except (ValueError, stripe.error.SignatureVerificationError):
+        return "Invalid signature", 400
 
-    flash("Order not found.", "error")
-    return redirect(url_for("home"))
+    if event["type"] == "checkout.session.completed":
+        session_id = event["data"]["object"]["id"]
+        _confirm_order_and_notify(session_id)
+
+    return "", 200
 
 
 @app.route("/order/cancel/<slug>")
