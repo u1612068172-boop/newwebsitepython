@@ -1,14 +1,14 @@
-"""Picanha para Familia & Lapicanha - Flask website.
+"""Peixe no Largo & Lapicanha - Flask website.
 
 Manages two Portuguese restaurants in Setúbal:
-- Picanha para Familia (seafood)
+- Peixe no Largo (seafood)
 - Lapicanha (premium grill)
 """
 import json
 import os
 import smtplib
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
@@ -236,7 +236,7 @@ def reservations(slug=None):
                 guests_int,
                 special,
                 "pending",
-                datetime.utcnow().isoformat(),
+                datetime.now(timezone.utc).isoformat(),
             ),
         )
         db.commit()
@@ -643,7 +643,7 @@ def order(slug):
                 special_requests,
                 "awaiting_payment",
                 checkout_session.id,
-                datetime.utcnow().isoformat(),
+                datetime.now(timezone.utc).isoformat(),
             ),
         )
         db.commit()
@@ -812,7 +812,7 @@ def not_found(e):
 def inject_globals():
     return {
         "all_restaurants": all_restaurants(),
-        "current_year": datetime.utcnow().year,
+        "current_year": datetime.now(timezone.utc).year,
     }
 
 

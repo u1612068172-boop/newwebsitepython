@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Picanha para Familia & Lapicanha — Setúbal, Portugal{% endblock %}</title>
-    <meta name="description" content="Two authentic Portuguese restaurants in Setúbal: Picanha para Familia (seafood) and Lapicanha (premium grill).">
+    <title>{% block title %}Peixe no Largo & Lapicanha — Setúbal, Portugal{% endblock %}</title>
+    <meta name="description" content="Two authentic Portuguese restaurants in Setúbal: Peixe no Largo (seafood) and Lapicanha (premium grill).">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+    <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='images/lapicanha-cover.jpg') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -19,7 +20,7 @@
         <a href="{{ url_for('home') }}" class="brand">
             <span class="brand-mark">O</span>
             <span class="brand-text">
-                <span class="brand-name">Picanha para Familia &amp; Lapicanha</span>
+                <span class="brand-name">Peixe no Largo &amp; Lapicanha</span>
                 <span class="brand-sub">Setúbal</span>
             </span>
         </a>
@@ -83,7 +84,7 @@
 <footer class="site-footer">
     <div class="container footer-inner">
         <div class="footer-col">
-            <h4>Picanha para Familia &amp; Lapicanha</h4>
+            <h4>Peixe no Largo &amp; Lapicanha</h4>
             <p data-i18n="footer_desc">Two authentic Portuguese dining experiences in Setúbal. From fresh coastal seafood to premium grilled picanha.</p>
         </div>
         {% for r in all_restaurants %}
@@ -110,7 +111,7 @@
     </div>
     <div class="footer-bottom">
         <div class="container">
-            <p>&copy; {{ current_year }} <span data-i18n="footer_copyright">Picanha para Familia &amp; Lapicanha · Setúbal, Portugal. All rights reserved.</span></p>
+            <p>&copy; {{ current_year }} <span data-i18n="footer_copyright">Peixe no Largo &amp; Lapicanha · Setúbal, Portugal. All rights reserved.</span></p>
         </div>
     </div>
 </footer>

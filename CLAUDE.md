@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Flask website for two Portuguese restaurants in Setúbal — **Picanha para Familia** (seafood, slug `casa-da-peixe` — slug kept for URL/image-file stability) and **Lapicanha** (premium grill, slug `lapicanha`). Deployed to Vercel as a Python serverless function; runs locally via Flask's dev server.
+Flask website for two Portuguese restaurants in Setúbal — **Peixe no Largo** (seafood, slug `casa-da-peixe` — slug kept for URL/image-file stability) and **Lapicanha** (premium grill, slug `lapicanha`). Deployed to Vercel as a Python serverless function; runs locally via Flask's dev server.
 
 ## Commands
 
